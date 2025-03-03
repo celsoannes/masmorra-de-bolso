@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="mb-3">
             <label>Unidade de Medida:</label>
             <select name="unidade_medida" required class="form-control">
-                <option value="unidade">Unidade</option>
+                <option value="pc">Peça</option>
                 <option value="m">Metro</option>
                 <option value="cm">Centímetro</option>
                 <option value="mm">Milímetro</option>
