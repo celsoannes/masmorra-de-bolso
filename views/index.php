@@ -9,7 +9,9 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 
 // Não precisamos de pesquisa no carregamento da página, apenas no AJAX
-$pesquisa = isset($_GET['pesquisa']) ? $_GET['pesquisa'] : '';
+//$pesquisa = isset($_GET['pesquisa']) ? $_GET['pesquisa'] : '';
+$pesquisa = trim($_GET['pesquisa'] ?? '');
+
 
 // Buscar produtos com base na pesquisa (caso haja)
 $sql = "SELECT id, nome, caminho_imagem FROM produtos";

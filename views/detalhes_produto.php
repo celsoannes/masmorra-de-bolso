@@ -22,21 +22,25 @@ if (!$produto) {
     exit;
 }
 
-// Buscar a peça associada ao produto
-$stmt_peca = $pdo->prepare("SELECT p.id AS peca_id, p.nome AS nome_peca, p.imagem AS imagem_peca, p.material AS material_peca, 
+// Buscar as peças associadas ao produto
+$stmt_pecas = $pdo->prepare("SELECT p.id AS peca_id, p.nome AS nome_peca, p.imagem AS imagem_peca, p.material AS material_peca, 
                                    p.quantidade_material, p.tempo_impressao, i.Marca AS marca_impressora, i.Modelo AS modelo_impressora, 
                                    i.Tipo AS tipo_impressora, i.Localizacao AS localizacao_impressora, i.kWh AS consumo_impressora
                             FROM pecas p
                             JOIN impressoras i ON p.impressora = i.ID
-                            WHERE p.id = (SELECT peca_id FROM produtos_pecas WHERE produto_id = ? LIMIT 1)");
-$stmt_peca->execute([$id]);
-$peca = $stmt_peca->fetch();
+                            JOIN produtos_pecas pp ON p.id = pp.peca_id
+                            WHERE pp.produto_id = ?");
+$stmt_pecas->execute([$id]);
+$pecas = $stmt_pecas->fetchAll();
 
-// Se a peça não for encontrada, redireciona de volta
-if (!$peca) {
-    header("Location: index.php");
-    exit;
-}
+// Buscar os componentes associados ao produto
+$stmt_componentes = $pdo->prepare("SELECT c.nome_material, c.tipo_material, c.descricao, c.unidade_medida, 
+                                          c.preco_unitario, c.fornecedor, c.caminho_imagem, pc.quantidade
+                                   FROM produtos_componentes pc
+                                   JOIN componentes c ON pc.componente_id = c.id
+                                   WHERE pc.produto_id = ?");
+$stmt_componentes->execute([$id]);
+$componentes = $stmt_componentes->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -60,18 +64,43 @@ if (!$peca) {
         </ul>
 
         <h3 class="mt-4">Detalhes da Peça Associada</h3>
-        <img src="<?= htmlspecialchars($peca['imagem_peca']) ?>" alt="Imagem da Peça" class="img-fluid mb-3" style="max-width: 300px;">
         <ul class="list-group">
-            <li class="list-group-item"><strong>Nome da Peça:</strong> <?= htmlspecialchars($peca['nome_peca']) ?></li>
-            <li class="list-group-item"><strong>Material da Peça:</strong> <?= htmlspecialchars($peca['material_peca']) ?></li>
-            <li class="list-group-item"><strong>Quantidade de Material:</strong> <?= number_format($peca['quantidade_material'], 2, ',', '.') ?> g</li>
-            <li class="list-group-item"><strong>Tempo de Impressão:</strong> <?= htmlspecialchars($peca['tempo_impressao']) ?></li>
-            <li class="list-group-item"><strong>Impressora Associada:</strong> <?= htmlspecialchars($peca['marca_impressora']) ?> - <?= htmlspecialchars($peca['modelo_impressora']) ?></li>
-            <li class="list-group-item"><strong>Tipo da Impressora:</strong> <?= htmlspecialchars($peca['tipo_impressora']) ?></li>
-            <li class="list-group-item"><strong>Localização da Impressora:</strong> <?= htmlspecialchars($peca['localizacao_impressora']) ?></li>
-            <li class="list-group-item"><strong>Consumo de Energia (kWh):</strong> <?= number_format($peca['consumo_impressora'], 3, ',', '.') ?></li>
+            <?php foreach ($pecas as $peca): ?>
+                <li class="list-group-item">
+                    <img src="<?= htmlspecialchars($peca['imagem_peca']) ?>" alt="Imagem da Peça" class="img-fluid mb-2" style="max-width: 100px;">
+                    <strong><?= htmlspecialchars($peca['nome_peca']) ?></strong> - 
+                    <?= htmlspecialchars($peca['material_peca']) ?>
+                    <br>
+                    <small>Quantidade de Material: <?= number_format($peca['quantidade_material'], 2, ',', '.') ?> g</small>
+                    <br>
+                    <small>Tempo de Impressão: <?= htmlspecialchars($peca['tempo_impressao']) ?></small>
+                    <br>
+                    <small>Impressora: <?= htmlspecialchars($peca['marca_impressora']) ?> - <?= htmlspecialchars($peca['modelo_impressora']) ?></small>
+                    <br>
+                    <small>Tipo da Impressora: <?= htmlspecialchars($peca['tipo_impressora']) ?></small>
+                    <br>
+                    <small>Localização: <?= htmlspecialchars($peca['localizacao_impressora']) ?></small>
+                    <br>
+                    <small>Consumo de Energia: <?= number_format($peca['consumo_impressora'], 3, ',', '.') ?> kWh</small>
+                </li>
+            <?php endforeach; ?>
         </ul>
 
+        <h3 class="mt-4">Componentes do Produto</h3>
+        <ul class="list-group">
+            <?php foreach ($componentes as $componente): ?>
+                <li class="list-group-item">
+                    <img src="<?= htmlspecialchars($componente['caminho_imagem']) ?>" alt="Imagem do Componente" class="img-fluid mb-2" style="max-width: 100px;">
+                    <strong><?= htmlspecialchars($componente['nome_material']) ?></strong> - 
+                    <?= htmlspecialchars($componente['tipo_material']) ?>
+                    <br>
+                    <small>Quantidade: <?= htmlspecialchars($componente['quantidade']) ?> <?= htmlspecialchars($componente['unidade_medida']) ?></small>
+                    <br>
+                    <small>Fornecedor: <?= htmlspecialchars($componente['fornecedor']) ?></small>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+        
         <a href="index.php" class="btn btn-primary mt-3">Voltar</a>
     </div>
 </body>
