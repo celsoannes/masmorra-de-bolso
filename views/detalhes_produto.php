@@ -39,6 +39,13 @@ $stmt_pecas = $pdo->prepare("
 $stmt_pecas->execute([$id]);
 $pecas = $stmt_pecas->fetchAll();
 
+// Buscar os componentes associados ao produto
+$stmt_componentes = $pdo->prepare("SELECT c.nome_material, c.tipo_material, c.descricao, c.unidade_medida, c.preco_unitario, c.fornecedor, c.observacoes, c.caminho_imagem
+    FROM componentes c
+    JOIN produtos_componentes pc ON c.id = pc.componente_id
+    WHERE pc.produto_id = ?");
+$stmt_componentes->execute([$id]);
+$componentes = $stmt_componentes->fetchAll();
 
 // Função para calcular o custo de energia
 function calcularCustoEnergia($consumo_impressora, $tempo_impressao, $kWh_energia, $ICMS, $PIS_PASEP, $COFINS, $TOTAL_horas) {
@@ -74,7 +81,6 @@ function calcularDepreciacao($tempo_impressao, $Valor_do_Bem, $Tempo_de_Vida_Uti
     return ($Valor_do_Bem / ($Tempo_de_Vida_Util * 60)) * $tempo_impressao_minutos;
 }
 
-// Cálculo do custo de produção e lucro
 // Cálculo do custo de produção e lucro
 function calcularCustoProducao($peca) {
     $custo_energia = calcularCustoEnergia($peca['consumo_impressora'], $peca['tempo_impressao'], $peca['kWh_energia'], 
@@ -144,6 +150,26 @@ function calcularCustoProducao($peca) {
                     <small>Localização: <?= htmlspecialchars($peca['localizacao_impressora']) ?></small>
                     <br>
                     <small>Consumo de Energia: <?= number_format($peca['consumo_impressora'], 3, ',', '.') ?> kWh</small>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+
+        <h3 class="mt-4">Componentes Associados</h3>
+        <ul class="list-group">
+            <?php foreach ($componentes as $componente): ?>
+                <li class="list-group-item">
+                    <img src="<?= htmlspecialchars($componente['caminho_imagem']) ?>" alt="Imagem da Peça" class="img-fluid mb-2" style="max-width: 100px;">
+                    <strong><?= htmlspecialchars($componente['nome_material']) ?></strong> - <?= htmlspecialchars($componente['tipo_material']) ?>
+                    <br>
+                    <small>Descrição: <?= htmlspecialchars($componente['descricao']) ?></small>
+                    <br>
+                    <small>Unidade de Medida: <?= htmlspecialchars($componente['unidade_medida']) ?></small>
+                    <br>
+                    <small>Preço Unitário: R$ <?= number_format($componente['preco_unitario'], 2, ',', '.') ?></small>
+                    <br>
+                    <small>Fornecedor: <?= htmlspecialchars($componente['fornecedor']) ?></small>
+                    <br>
+                    <small>Observações: <?= htmlspecialchars($componente['observacoes']) ?></small>
                 </li>
             <?php endforeach; ?>
         </ul>
