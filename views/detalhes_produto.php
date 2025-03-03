@@ -40,7 +40,7 @@ $stmt_pecas->execute([$id]);
 $pecas = $stmt_pecas->fetchAll();
 
 // Buscar os componentes associados ao produto
-$stmt_componentes = $pdo->prepare("SELECT c.nome_material, c.tipo_material, c.descricao, c.unidade_medida, c.preco_unitario, c.fornecedor, c.observacoes, c.caminho_imagem
+$stmt_componentes = $pdo->prepare("SELECT c.nome_material, c.tipo_material, c.descricao, c.unidade_medida, c.preco_unitario, c.fornecedor, c.observacoes, c.caminho_imagem, c.id
     FROM componentes c
     JOIN produtos_componentes pc ON c.id = pc.componente_id
     WHERE pc.produto_id = ?");
@@ -125,8 +125,7 @@ function calcularCustoProducao($peca) {
             <li class="list-group-item"><strong>Vídeo:</strong> <a href="<?= htmlspecialchars($produto['video']) ?>" target="_blank">Assistir</a></li>
             <li class="list-group-item"><strong>Download:</strong> <a href="<?= htmlspecialchars($produto['baixar']) ?>" target="_blank">Baixar</a></li>
             <li class="list-group-item"><strong>Observações:</strong> <?= nl2br(htmlspecialchars($produto['observacoes'])) ?></li>
-            <li class="list-group-item"><strong>Lucro Estimado:</strong> R$ <?= number_format($produto['lucro'], 2, ',', '.') ?></li>
-            
+            <li class="list-group-item"><strong>Lucro Estimado:</strong> <?= number_format($produto['lucro'], 0, ',', '.') ?>%</li>
         </ul>
 
         <h3 class="mt-4">Detalhes da Peça Associada</h3>
@@ -203,6 +202,123 @@ function calcularCustoProducao($peca) {
                 <?php endforeach; ?>
             </tbody>
         </table>
+
+        <h3 class="mt-4">Cálculo do Custo de Componentes</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Componente</th>
+                    <th>Unidade</th>
+                    <th>Quantidade</th>
+                    <th>Custo Unitário (R$)</th>
+                    <th>Custo Total (R$)</th>
+                    <th>Lucro (R$)</th>
+                    <th>Valor de Venda (R$)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($componentes as $componente): 
+                    $stmt_quantidade = $pdo->prepare("SELECT quantidade FROM produtos_componentes WHERE produto_id = ? AND componente_id = ?");
+                    $stmt_quantidade->execute([$id, $componente['id']]);
+                    $quantidade = $stmt_quantidade->fetchColumn();
+                    
+                    $custo_total = $componente['preco_unitario'] * $quantidade;
+                    $lucro = $custo_total * ($produto['lucro'] / 100);
+                    $valor_venda = $custo_total + $lucro;
+                ?>
+                <tr>
+                    <td><?= htmlspecialchars($componente['nome_material']) ?></td>
+                    <td><?= htmlspecialchars($componente['unidade_medida']) ?></td>
+                    <td><?= $quantidade ?></td>
+                    <td>R$ <?= number_format($componente['preco_unitario'], 2, ',', '.') ?></td>
+                    <td>R$ <?= number_format($custo_total, 2, ',', '.') ?></td>
+                    <td>R$ <?= number_format($lucro, 2, ',', '.') ?></td>
+                    <td>R$ <?= number_format($valor_venda, 2, ',', '.') ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <h3 class="mt-4">Totalização dos Valores</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Total Custo de Produção (R$)</th>
+                    <th>Total Custo de Componentes (R$)</th>
+                    <th class="highlight-custo-total">Custo Total (R$)</th> <!-- Nova coluna -->
+                    <th class="highlight-lucro">Total Lucro (R$)</th>
+                    <th class="highlight-venda">Valor de Venda Sugerido (R$)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <?php 
+                        // Calculando os totais para Custo de Produção, Custo Total, Lucro e Valor de Venda
+                        $total_custo_producao = 0;
+                        $total_custo_total = 0;
+                        $total_lucro = 0;
+                        $total_valor_venda = 0;
+
+                        foreach ($pecas as $peca) {
+                            $custos = calcularCustoProducao($peca);
+                            $total_custo_producao += $custos['custo_producao'];
+                            $total_lucro += $custos['lucro'];
+                            $total_valor_venda += $custos['valor_venda'];
+                        }
+
+                        foreach ($componentes as $componente) {
+                            $stmt_quantidade = $pdo->prepare("SELECT quantidade FROM produtos_componentes WHERE produto_id = ? AND componente_id = ?");
+                            $stmt_quantidade->execute([$id, $componente['id']]);
+                            $quantidade = $stmt_quantidade->fetchColumn();
+                            
+                            $custo_total = $componente['preco_unitario'] * $quantidade;
+                            $lucro = $custo_total * ($produto['lucro'] / 100);
+                            $valor_venda = $custo_total + $lucro;
+
+                            $total_custo_total += $custo_total;
+                            $total_lucro += $lucro;
+                            $total_valor_venda += $valor_venda;
+                        }
+
+                        // Calculando o Custo Total (Custo de Produção + Custo de Componentes)
+                        $custo_total_geral = $total_custo_producao + $total_custo_total;
+                    ?>
+                    <td style="font-size: 1.2em;">R$ <?= number_format($total_custo_producao, 2, ',', '.') ?></td>
+                    <td style="font-size: 1.2em;">R$ <?= number_format($total_custo_total, 2, ',', '.') ?></td>
+                    <td class="highlight-custo-total" style="font-size: 1.4em; font-weight: bold; background-color: #e3f2fd; color: #0d47a1;" >R$ <?= number_format($custo_total_geral, 2, ',', '.') ?></td> <!-- Exibindo o Custo Total -->
+                    <td class="highlight-lucro" style="font-size: 1.4em; font-weight: bold; background-color: #d4edda; color: #155724;">R$ <?= number_format($total_lucro, 2, ',', '.') ?></td>
+                    <td class="highlight-venda" style="font-size: 1.4em; font-weight: bold; background-color: #c3e6cb; color: #155724;">R$ <?= number_format($total_valor_venda, 2, ',', '.') ?></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <style>
+            .highlight-lucro {
+                text-align: center;
+                font-size: 1.4em;
+                font-weight: bold;
+                background-color: #d4edda; /* Verde suave para Lucro */
+                color: #155724; /* Cor mais convidativa */
+            }
+
+            .highlight-venda {
+                text-align: center;
+                font-size: 1.4em;
+                font-weight: bold;
+                background-color: #c3e6cb; /* Verde suave para Valor de Venda */
+                color: #155724; /* Cor mais convidativa */
+            }
+
+            .highlight-custo-total {
+                text-align: center;
+                font-size: 1.4em;
+                font-weight: bold;
+                background-color: #e3f2fd; /* Azul claro suave para Custo Total */
+                color: #0d47a1; /* Azul escuro para contrastar bem */
+            }
+        </style>
+
+
 
     </div>
 </body>
