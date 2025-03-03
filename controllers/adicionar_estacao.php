@@ -3,6 +3,10 @@ session_start();
 require __DIR__ . '/../config/config.php';
 require __DIR__ . '/../includes/menu.php';
 
+// Buscar opções de lavagem
+$stmt_lavagem = $pdo->query("SELECT id, Produto FROM lavagem");
+$opcoes_lavagem = $stmt_lavagem->fetchAll(PDO::FETCH_ASSOC);
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $marca = $_POST["marca"];
     $modelo = $_POST["modelo"];
@@ -11,9 +15,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $valor_bem = $_POST["valor_bem"];
     $tempo_vida_util = $_POST["tempo_vida_util"];
     $kwh = $_POST["kwh"];
+    $lavagem_id = $_POST["lavagem_id"]; // Adicionado
 
-    $stmt = $pdo->prepare("INSERT INTO estacoes_lavagem (Marca, Modelo, Localizacao, Data_Aquisicao, Valor_do_Bem, Tempo_de_Vida_Util, kWh) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$marca, $modelo, $localizacao, $data_aquisicao, $valor_bem, $tempo_vida_util, $kwh]);
+    $stmt = $pdo->prepare("INSERT INTO estacoes_lavagem (Marca, Modelo, Localizacao, Data_Aquisicao, Valor_do_Bem, Tempo_de_Vida_Util, kWh, lavagem_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$marca, $modelo, $localizacao, $data_aquisicao, $valor_bem, $tempo_vida_util, $kwh, $lavagem_id]); // Adicionado
 
     header("Location: ../views/estacoes_lavagem.php");
     exit;
@@ -50,6 +55,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="mb-3">
             <label class="form-label">Consumo (kWh)</label>
             <input type="number" step="0.001" name="kwh" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Produto de Lavagem</label>
+            <select name="lavagem_id" class="form-control">
+                <option value="">Selecione um produto</option>
+                <?php foreach ($opcoes_lavagem as $opcao): ?>
+                    <option value="<?= $opcao['id'] ?>"><?= htmlspecialchars($opcao['Produto']) ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
         <button type="submit" class="btn btn-primary mt-3">Adicionar</button>
         <a href="../views/estacoes_lavagem.php" class="btn btn-secondary mt-3">Voltar</a>

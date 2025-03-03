@@ -8,6 +8,10 @@ $stmt = $pdo->prepare("SELECT * FROM estacoes_lavagem WHERE ID = ?");
 $stmt->execute([$id]);
 $estacao = $stmt->fetch(PDO::FETCH_ASSOC);
 
+// Buscar opções de lavagem
+$stmt_lavagem = $pdo->query("SELECT id, Produto FROM lavagem");
+$opcoes_lavagem = $stmt_lavagem->fetchAll(PDO::FETCH_ASSOC);
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $marca = $_POST["marca"];
     $modelo = $_POST["modelo"];
@@ -16,9 +20,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $valor_bem = $_POST["valor_bem"];
     $tempo_vida_util = $_POST["tempo_vida_util"];
     $kwh = $_POST["kwh"];
+    $lavagem_id = $_POST["lavagem_id"]; // Adicionado
 
-    $stmt = $pdo->prepare("UPDATE estacoes_lavagem SET Marca=?, Modelo=?, Localizacao=?, Data_Aquisicao=?, Valor_do_Bem=?, Tempo_de_Vida_Util=?, kWh=? WHERE ID=?");
-    $stmt->execute([$marca, $modelo, $localizacao, $data_aquisicao, $valor_bem, $tempo_vida_util, $kwh, $id]);
+    $stmt = $pdo->prepare("UPDATE estacoes_lavagem SET Marca=?, Modelo=?, Localizacao=?, Data_Aquisicao=?, Valor_do_Bem=?, Tempo_de_Vida_Util=?, kWh=?, lavagem_id=? WHERE ID=?"); // Adicionado
+    $stmt->execute([$marca, $modelo, $localizacao, $data_aquisicao, $valor_bem, $tempo_vida_util, $kwh, $lavagem_id, $id]); // Adicionado
 
     header("Location: ../views/estacoes_lavagem.php");
     exit;
@@ -61,6 +66,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="mb-3">
             <label class="form-label">Consumo (kWh)</label>
             <input type="number" step="0.001" name="kwh" class="form-control" value="<?= htmlspecialchars($estacao['kWh']) ?>" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Produto de Lavagem</label>
+            <select name="lavagem_id" class="form-control">
+                <option value="">Selecione um produto</option>
+                <?php foreach ($opcoes_lavagem as $opcao): ?>
+                    <option value="<?= $opcao['id'] ?>" <?= ($estacao['lavagem_id'] == $opcao['id']) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($opcao['Produto']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
         </div>
 
         <button type="submit" class="btn btn-primary mt-3">Salvar Alterações</button>
