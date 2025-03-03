@@ -318,8 +318,6 @@ function calcularCustoProducao($peca) {
             }
         </style>
 
-
-
     </div>
 </body>
 </html>
