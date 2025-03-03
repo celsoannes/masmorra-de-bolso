@@ -19,18 +19,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $produto_id = $pdo->lastInsertId();
 
         // Adicionar peças ao produto
-        foreach ($_POST['pecas'] as $peca_id => $quantidade) {
-            if ($quantidade > 0) {
-                $pdo->prepare("INSERT INTO produtos_pecas (produto_id, peca_id, quantidade) VALUES (?, ?, ?)")
-                    ->execute([$produto_id, $peca_id, $quantidade]);
+        if (isset($_POST['pecas']) && is_array($_POST['pecas'])) {
+            foreach ($_POST['pecas'] as $peca_id => $quantidade) {
+                if ($quantidade > 0) {
+                    $pdo->prepare("INSERT INTO produtos_pecas (produto_id, peca_id, quantidade) VALUES (?, ?, ?)")
+                        ->execute([$produto_id, $peca_id, $quantidade]);
+                }
             }
         }
 
         // Adicionar componentes ao produto
-        foreach ($_POST['componentes'] as $componente_id => $quantidade) {
-            if ($quantidade > 0) {
-                $pdo->prepare("INSERT INTO produtos_componentes (produto_id, componente_id, quantidade) VALUES (?, ?, ?)")
-                    ->execute([$produto_id, $componente_id, $quantidade]);
+        if (isset($_POST['componentes']) && is_array($_POST['componentes'])) {
+            foreach ($_POST['componentes'] as $componente_id => $quantidade) {
+                if ($quantidade > 0) {
+                    $pdo->prepare("INSERT INTO produtos_componentes (produto_id, componente_id, quantidade) VALUES (?, ?, ?)")
+                        ->execute([$produto_id, $componente_id, $quantidade]);
+                }
             }
         }
 

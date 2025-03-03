@@ -19,17 +19,17 @@ if (!$produto) {
 
 // Buscar peças associadas ao produto
 $stmt = $pdo->prepare("SELECT p.id, p.nome, pp.quantidade 
-                       FROM produtos_pecas pp 
-                       JOIN pecas p ON pp.peca_id = p.id 
-                       WHERE pp.produto_id = ?");
+                            FROM produtos_pecas pp 
+                            JOIN pecas p ON pp.peca_id = p.id 
+                            WHERE pp.produto_id = ?");
 $stmt->execute([$id]);
 $pecas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Buscar componentes associados ao produto
 $stmt = $pdo->prepare("SELECT c.id, c.nome_material AS nome, pc.quantidade 
-                       FROM produtos_componentes pc 
-                       JOIN componentes c ON pc.componente_id = c.id 
-                       WHERE pc.produto_id = ?");
+                            FROM produtos_componentes pc 
+                            JOIN componentes c ON pc.componente_id = c.id 
+                            WHERE pc.produto_id = ?");
 $stmt->execute([$id]);
 $componentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -56,18 +56,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pdo->prepare("DELETE FROM produtos_componentes WHERE produto_id = ?")->execute([$id]);
 
         // Adicionar peças
-        foreach ($_POST['pecas'] as $peca_id => $quantidade) {
-            if ($quantidade > 0) {
-                $pdo->prepare("INSERT INTO produtos_pecas (produto_id, peca_id, quantidade) VALUES (?, ?, ?)")
-                    ->execute([$id, $peca_id, $quantidade]);
+        if (isset($_POST['pecas']) && is_array($_POST['pecas'])) {
+            foreach ($_POST['pecas'] as $peca_id => $quantidade) {
+                if ($quantidade > 0) {
+                    $pdo->prepare("INSERT INTO produtos_pecas (produto_id, peca_id, quantidade) VALUES (?, ?, ?)")
+                        ->execute([$id, $peca_id, $quantidade]);
+                }
             }
         }
 
         // Adicionar componentes
-        foreach ($_POST['componentes'] as $componente_id => $quantidade) {
-            if ($quantidade > 0) {
-                $pdo->prepare("INSERT INTO produtos_componentes (produto_id, componente_id, quantidade) VALUES (?, ?, ?)")
-                    ->execute([$id, $componente_id, $quantidade]);
+        if (isset($_POST['componentes']) && is_array($_POST['componentes'])) {
+            foreach ($_POST['componentes'] as $componente_id => $quantidade) {
+                if ($quantidade > 0) {
+                    $pdo->prepare("INSERT INTO produtos_componentes (produto_id, componente_id, quantidade) VALUES (?, ?, ?)")
+                        ->execute([$id, $componente_id, $quantidade]);
+                }
             }
         }
 
