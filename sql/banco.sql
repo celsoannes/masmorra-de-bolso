@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Tempo de geração: 03/03/2025 às 04:07
+-- Tempo de geração: 03/03/2025 às 22:54
 -- Versão do servidor: 10.11.6-MariaDB-0+deb12u1
 -- Versão do PHP: 8.2.26
 
@@ -44,8 +44,8 @@ CREATE TABLE `componentes` (
 --
 
 INSERT INTO `componentes` (`id`, `nome_material`, `tipo_material`, `descricao`, `unidade_medida`, `preco_unitario`, `fornecedor`, `observacoes`, `caminho_imagem`) VALUES
-(7, 'Tigelas Redonda Cumbuca Em Aço Inox 17cm', 'Aço Inox', 'Tigelas Redonda Cumbuca Em Aço Inox 17cm\r\n\r\nNão tem um recipiente adequado para servir sobremesa, molhos e porções?\r\n\r\nA tigelas cumbuca em Inox 17cm é ideal para casa, lanchonetes ou restaurantes trazendo durabilidade, beleza e praticada a sua cozinha no momento de preparar e levar a mesa.\r\n\r\nFabricado em aço inox.\r\nTamanho: 500ml\r\n\r\nMedida aproximadas de: 17 L x 4 A cm.\r\n\r\nAcompanha o produto:\r\n   • - 12 x Tigela Redonda Cumbuca Em Aço Inox 17cm', 'unidade', 6.40, 'https://shopee.com.br/product/741556559/23507289429?uls_trackid=524d37sh01s1&utm_campaign=id_7XfK3pi6C6&utm_content=----&utm_medium=affiliates&utm_source=an_18307260223&utm_term=cngp98wqgiy5', '', '../uploads/imagens/afc4674651512c525fbc65425eb591bd.png'),
-(8, 'Ímã de neodímio 8x3 mm', 'Ímã', 'Ímã de neodímio super potente\r\nEscolha a medida para o envio de 1 kit com 20 peças da medida escolhida\r\nTemos o maior acervo em tamanhos e medias diferente de ímã de neodímio do Brasil\r\n\r\nEspecificações de cada tamanho disponível neste anuncio:\r\n\r\nCaracterísticas Gerais\r\nRevestimento de Níquel (Ni-Cu-Ni)\r\nTemperatura máxima de trabalho: 80 °C\r\nFormato: Disco\r\n\r\n8x3 mm\r\nDiâmetro: 8 mm ou 0,8 cm\r\nEspessura: 2 mm ou 0,2 cm\r\nSuporta até 1,2 kg cada peça\r\nPossui 3600 Gauss\r\nPeso: 1,1 gramas cada peça', 'unidade', 2.03, 'https://shopee.com.br/%C3%8Dm%C3%A3-de-neod%C3%ADmio-8x1-8x1-5-8x2-8x3-8x4-8x5-8x8-8x10-mm-20-pe%C3%A7as-super-%C3%ADmas-potente-disco-imediato-i.1345872510.22697752989', '', '../uploads/imagens/df4b64131c19e4492daca61039d3ec52.png');
+(7, 'Tigelas Redonda Cumbuca Em Aço Inox 17cm', 'Aço Inox', 'Tigelas Redonda Cumbuca Em Aço Inox 17cm\r\n\r\nNão tem um recipiente adequado para servir sobremesa, molhos e porções?\r\n\r\nA tigelas cumbuca em Inox 17cm é ideal para casa, lanchonetes ou restaurantes trazendo durabilidade, beleza e praticada a sua cozinha no momento de preparar e levar a mesa.\r\n\r\nFabricado em aço inox.\r\nTamanho: 500ml\r\n\r\nMedida aproximadas de: 17 L x 4 A cm.\r\n\r\nAcompanha o produto:\r\n   • - 12 x Tigela Redonda Cumbuca Em Aço Inox 17cm', 'pc', 6.40, 'https://shopee.com.br/product/741556559/23507289429?uls_trackid=524d37sh01s1&utm_campaign=id_7XfK3pi6C6&utm_content=----&utm_medium=affiliates&utm_source=an_18307260223&utm_term=cngp98wqgiy5', '', '../uploads/imagens/afc4674651512c525fbc65425eb591bd.png'),
+(8, 'Ímã de neodímio 8x3 mm', 'Ímã', 'Ímã de neodímio super potente\r\nEscolha a medida para o envio de 1 kit com 20 peças da medida escolhida\r\nTemos o maior acervo em tamanhos e medias diferente de ímã de neodímio do Brasil\r\n\r\nEspecificações de cada tamanho disponível neste anuncio:\r\n\r\nCaracterísticas Gerais\r\nRevestimento de Níquel (Ni-Cu-Ni)\r\nTemperatura máxima de trabalho: 80 °C\r\nFormato: Disco\r\n\r\n8x3 mm\r\nDiâmetro: 8 mm ou 0,8 cm\r\nEspessura: 2 mm ou 0,2 cm\r\nSuporta até 1,2 kg cada peça\r\nPossui 3600 Gauss\r\nPeso: 1,1 gramas cada peça', 'pc', 2.03, 'https://shopee.com.br/%C3%8Dm%C3%A3-de-neod%C3%ADmio-8x1-8x1-5-8x2-8x3-8x4-8x5-8x8-8x10-mm-20-pe%C3%A7as-super-%C3%ADmas-potente-disco-imediato-i.1345872510.22697752989', '', '../uploads/imagens/df4b64131c19e4492daca61039d3ec52.png');
 
 -- --------------------------------------------------------
 
@@ -61,15 +61,18 @@ CREATE TABLE `estacoes_lavagem` (
   `Data_Aquisicao` date DEFAULT NULL,
   `Valor_do_Bem` decimal(10,2) DEFAULT NULL,
   `Tempo_de_Vida_Util` int(11) DEFAULT NULL,
-  `kWh` decimal(10,3) DEFAULT NULL
+  `kWh` decimal(10,3) DEFAULT NULL,
+  `lavagem_id` int(10) UNSIGNED DEFAULT NULL,
+  `tempo_lavagem` time DEFAULT NULL,
+  `tempo_cura` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Despejando dados para a tabela `estacoes_lavagem`
 --
 
-INSERT INTO `estacoes_lavagem` (`ID`, `Marca`, `Modelo`, `Localizacao`, `Data_Aquisicao`, `Valor_do_Bem`, `Tempo_de_Vida_Util`, `kWh`) VALUES
-(1, 'Elegoo', 'MERCURY PLUS V3.0', 'Laboratório', '2024-03-01', 1293.99, 8766, 0.060);
+INSERT INTO `estacoes_lavagem` (`ID`, `Marca`, `Modelo`, `Localizacao`, `Data_Aquisicao`, `Valor_do_Bem`, `Tempo_de_Vida_Util`, `kWh`, `lavagem_id`, `tempo_lavagem`, `tempo_cura`) VALUES
+(4, 'Elegoo', 'MERCURY PLUS V3.0', 'Laboratório', '2024-03-01', 1293.99, 8766, 0.060, 1, '00:05:00', '00:30:00');
 
 -- --------------------------------------------------------
 
@@ -89,7 +92,8 @@ CREATE TABLE `estudios` (
 --
 
 INSERT INTO `estudios` (`id`, `nome`, `site`, `created_at`) VALUES
-(2, 'Curations By Kira', 'https://www.curationsbykira.com/', '2025-03-02 06:29:35');
+(2, 'Curations By Kira', 'https://www.curationsbykira.com/', '2025-03-02 06:29:35'),
+(8, 'Goldem Dragons', NULL, '2025-03-03 20:23:42');
 
 -- --------------------------------------------------------
 
@@ -140,7 +144,7 @@ CREATE TABLE `impressoras` (
 --
 
 INSERT INTO `impressoras` (`ID`, `Marca`, `Modelo`, `Tipo`, `Localizacao`, `Data_Aquisicao`, `Valor_do_Bem`, `Tempo_de_Vida_Util`, `kWh`) VALUES
-(1, 'Bambu Lab', 'A1', 'Filamento', 'Laboratório', '2024-01-15', 5999.00, 8766, 1.300),
+(1, 'Bambu Lab', 'A1', 'Filamento', 'Laboratório', '2024-01-15', 5999.00, 8766, 0.500),
 (2, 'Elegoo', 'Saturn 3 Ultra', 'Resina', 'Laboratório', '2024-02-20', 3295.99, 2000, 0.072);
 
 -- --------------------------------------------------------
@@ -150,7 +154,7 @@ INSERT INTO `impressoras` (`ID`, `Marca`, `Modelo`, `Tipo`, `Localizacao`, `Data
 --
 
 CREATE TABLE `lavagem` (
-  `id` int(11) NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL,
   `Produto` varchar(255) DEFAULT NULL,
   `Valor_Litro` decimal(10,2) DEFAULT NULL,
   `Fator_Consumo` decimal(10,3) DEFAULT NULL,
@@ -190,7 +194,9 @@ CREATE TABLE `pecas` (
 --
 
 INSERT INTO `pecas` (`id`, `nome`, `estudio_id`, `nome_original`, `nome_arquivo`, `impressora`, `material`, `quantidade_material`, `tempo_impressao`, `created_at`, `imagem`) VALUES
-(20, 'Torre de Dados Toca do Hobbit Faminto com Tigela de Petiscos', 2, 'Hungry Halfling Snack Bowl Dice Tower', 'Hungry Halfling Snack Bowl Dice Tower v1.7.3mf', '1', 'Troca de Cor', 358.00, '19:59:00', '2025-03-03 02:07:01', 'uploads/pecas/67c50ec5d2267.png');
+(24, 'Torre de Dados Toca do Hobbit Faminto com Tigela de Petiscos', 2, 'Hungry Halfling Snack Bowl Dice Tower', 'Hungry Halfling Snack Bowl Dice Tower v1.7.3mf', '1', 'Duo Color e Dourado', 358.00, '19:59:00', '2025-03-03 16:40:10', '../uploads/pecas/67c5db6a65ef6.png'),
+(26, 'Snackbowl Divider', 2, 'Snackbowl Divider', 'snack bowl dice divider v1.2.stl', '1', 'PLA PREMIUM', 53.00, '01:43:00', '2025-03-03 17:09:40', '../uploads/pecas/67c5e254347a5.png'),
+(27, 'Berdolock', 8, 'Berdolock', 'Berdolock - Miniaturas para FtQ.stl', '2', 'Semi-Flexível (70/30)', 7.00, '02:12:00', '2025-03-03 20:23:42', '../uploads/pecas/67c60fce69403.png');
 
 -- --------------------------------------------------------
 
@@ -213,7 +219,8 @@ CREATE TABLE `produtos` (
 --
 
 INSERT INTO `produtos` (`id`, `nome`, `caminho_imagem`, `video`, `baixar`, `observacoes`, `lucro`) VALUES
-(5, 'Torre de Dados Toca do Hobbit Faminto com Tigela de Petiscos', '../uploads/imagens/e2f8a728534462ef8cf2f846cd6bec56.png', 'https://www.youtube.com/results?search_query=vscode+conect+remote+website', 'https://www.youtube.com/results?search_query=vscode+conect+remote+website', 'https://www.youtube.com/results?search_query=vscode+conect+remote+website', 150.00);
+(8, 'Torre de Dados Toca do Hobbit Faminto com Tigela de Petiscos', '../uploads/imagens/d7914ebf4f752e858b0bce859a9f9968.png', 'http://192.168.0.220/controllers/adicionar_produto.php', 'http://192.168.0.220/controllers/adicionar_produto.php', 'http://192.168.0.220/controllers/adicionar_produto.php', 150.00),
+(9, 'Berdolock - Miniaturas para FtQ', '../uploads/imagens/e38661b2bd06e68dca2fe48d6dbcaa4a.png', 'http://192.168.0.220/controllers/adicionar_produto.php', 'http://192.168.0.220/controllers/adicionar_produto.php', '', 150.00);
 
 -- --------------------------------------------------------
 
@@ -233,7 +240,7 @@ CREATE TABLE `produtos_componentes` (
 --
 
 INSERT INTO `produtos_componentes` (`id`, `produto_id`, `componente_id`, `quantidade`) VALUES
-(4, 5, 7, 1);
+(10, 8, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -253,7 +260,9 @@ CREATE TABLE `produtos_pecas` (
 --
 
 INSERT INTO `produtos_pecas` (`id`, `produto_id`, `peca_id`, `quantidade`) VALUES
-(7, 5, 20, 1);
+(15, 8, 24, 1),
+(16, 8, 26, 1),
+(17, 9, 27, 1);
 
 -- --------------------------------------------------------
 
@@ -323,7 +332,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nome`, `email`, `senha_hash`, `ultimo_acesso`, `created_at`) VALUES
-(1, 'Celso Annes', 'celsoannes@gmail.com', '$2y$10$8I2jv4zRgK7Bs8ji26zYRufxSuWbadOEiD9ST/hAgij5brbeEXteW', '2025-03-03 02:45:21', '2025-03-02 05:19:43');
+(1, 'Celso Annes', 'celsoannes@gmail.com', '$2y$10$8I2jv4zRgK7Bs8ji26zYRufxSuWbadOEiD9ST/hAgij5brbeEXteW', '2025-03-03 22:53:23', '2025-03-02 05:19:43');
 
 --
 -- Índices para tabelas despejadas
@@ -339,7 +348,8 @@ ALTER TABLE `componentes`
 -- Índices de tabela `estacoes_lavagem`
 --
 ALTER TABLE `estacoes_lavagem`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `fk_estacoes_lavagem_lavagem` (`lavagem_id`);
 
 --
 -- Índices de tabela `estudios`
@@ -431,13 +441,13 @@ ALTER TABLE `componentes`
 -- AUTO_INCREMENT de tabela `estacoes_lavagem`
 --
 ALTER TABLE `estacoes_lavagem`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `estudios`
 --
 ALTER TABLE `estudios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de tabela `filamentos`
@@ -455,31 +465,31 @@ ALTER TABLE `impressoras`
 -- AUTO_INCREMENT de tabela `lavagem`
 --
 ALTER TABLE `lavagem`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de tabela `pecas`
 --
 ALTER TABLE `pecas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de tabela `produtos`
 --
 ALTER TABLE `produtos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de tabela `produtos_componentes`
 --
 ALTER TABLE `produtos_componentes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de tabela `produtos_pecas`
 --
 ALTER TABLE `produtos_pecas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de tabela `resinas`
@@ -502,6 +512,12 @@ ALTER TABLE `usuarios`
 --
 -- Restrições para tabelas despejadas
 --
+
+--
+-- Restrições para tabelas `estacoes_lavagem`
+--
+ALTER TABLE `estacoes_lavagem`
+  ADD CONSTRAINT `fk_estacoes_lavagem_lavagem` FOREIGN KEY (`lavagem_id`) REFERENCES `lavagem` (`id`) ON DELETE SET NULL;
 
 --
 -- Restrições para tabelas `pecas`
