@@ -53,7 +53,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $caminho_imagem = $diretorio . $nome_arquivo_imagem;
                 
                 if (move_uploaded_file($_FILES['imagem']['tmp_name'], $caminho_imagem)) {
-                    $imagem = str_replace('../', '', $caminho_imagem); // Salvando caminho relativo
+                    $imagem = '../' . str_replace('../', '', $caminho_imagem); // Adicionando '../' ao caminho
+
                 }
             } else {
                 echo "<script>alert('Erro: Formato inválido ou tamanho maior que 2MB!');</script>";

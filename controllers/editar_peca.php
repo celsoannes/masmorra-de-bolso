@@ -57,7 +57,7 @@ $materiais_resina = $pdo->query("SELECT TIPO FROM resinas ORDER BY TIPO")->fetch
 
 <div class="container mt-5">
     <h2>Editar Peças 3D</h2>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         <div class="mb-3">
             <label>Nome:</label>
             <input type="text" name="nome" value="<?= htmlspecialchars($peca['nome']) ?>" required class="form-control">
@@ -114,6 +114,23 @@ $materiais_resina = $pdo->query("SELECT TIPO FROM resinas ORDER BY TIPO")->fetch
         <div class="mb-3">
             <label>Tempo de Impressão (hh:mm):</label>
             <input type="time" name="tempo_impressao" value="<?= $peca['tempo_impressao'] ?>" required class="form-control">
+        </div>
+
+        <!-- Pré-visualização da imagem atual -->
+        <div class="mb-3">
+            <label>Imagem Atual:</label><br>
+            <?php if (!empty($peca['imagem']) && file_exists($peca['imagem'])): ?>
+                <img src="<?= htmlspecialchars($peca['imagem']) ?>" alt="Imagem da Peça" style="max-width: 200px; max-height: 200px; margin-bottom: 10px;">
+            <?php else: ?>
+                <p>Nenhuma imagem disponível.</p>
+            <?php endif; ?>
+        </div>
+
+        <!-- Upload de nova imagem -->
+        <div class="mb-3">
+            <label>Nova Imagem:</label>
+            <input type="file" name="imagem" accept="image/*" class="form-control">
+            <small class="form-text text-muted">Deixe em branco para manter a imagem atual.</small>
         </div>
 
         <button type="submit" class="btn btn-primary mt-3">Atualizar</button>

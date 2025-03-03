@@ -21,6 +21,22 @@ if (!$produto) {
     header("Location: index.php");
     exit;
 }
+
+// Buscar a peça associada ao produto
+$stmt_peca = $pdo->prepare("SELECT p.id AS peca_id, p.nome AS nome_peca, p.imagem AS imagem_peca, p.material AS material_peca, 
+                                   p.quantidade_material, p.tempo_impressao, i.Marca AS marca_impressora, i.Modelo AS modelo_impressora, 
+                                   i.Tipo AS tipo_impressora, i.Localizacao AS localizacao_impressora, i.kWh AS consumo_impressora
+                            FROM pecas p
+                            JOIN impressoras i ON p.impressora = i.ID
+                            WHERE p.id = (SELECT peca_id FROM produtos_pecas WHERE produto_id = ? LIMIT 1)");
+$stmt_peca->execute([$id]);
+$peca = $stmt_peca->fetch();
+
+// Se a peça não for encontrada, redireciona de volta
+if (!$peca) {
+    header("Location: index.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -41,6 +57,19 @@ if (!$produto) {
             <li class="list-group-item"><strong>Download:</strong> <a href="<?= htmlspecialchars($produto['baixar']) ?>" target="_blank">Baixar</a></li>
             <li class="list-group-item"><strong>Observações:</strong> <?= nl2br(htmlspecialchars($produto['observacoes'])) ?></li>
             <li class="list-group-item"><strong>Lucro Estimado:</strong> R$ <?= number_format($produto['lucro'], 2, ',', '.') ?></li>
+        </ul>
+
+        <h3 class="mt-4">Detalhes da Peça Associada</h3>
+        <img src="<?= htmlspecialchars($peca['imagem_peca']) ?>" alt="Imagem da Peça" class="img-fluid mb-3" style="max-width: 300px;">
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Nome da Peça:</strong> <?= htmlspecialchars($peca['nome_peca']) ?></li>
+            <li class="list-group-item"><strong>Material da Peça:</strong> <?= htmlspecialchars($peca['material_peca']) ?></li>
+            <li class="list-group-item"><strong>Quantidade de Material:</strong> <?= number_format($peca['quantidade_material'], 2, ',', '.') ?> g</li>
+            <li class="list-group-item"><strong>Tempo de Impressão:</strong> <?= htmlspecialchars($peca['tempo_impressao']) ?></li>
+            <li class="list-group-item"><strong>Impressora Associada:</strong> <?= htmlspecialchars($peca['marca_impressora']) ?> - <?= htmlspecialchars($peca['modelo_impressora']) ?></li>
+            <li class="list-group-item"><strong>Tipo da Impressora:</strong> <?= htmlspecialchars($peca['tipo_impressora']) ?></li>
+            <li class="list-group-item"><strong>Localização da Impressora:</strong> <?= htmlspecialchars($peca['localizacao_impressora']) ?></li>
+            <li class="list-group-item"><strong>Consumo de Energia (kWh):</strong> <?= number_format($peca['consumo_impressora'], 3, ',', '.') ?></li>
         </ul>
 
         <a href="index.php" class="btn btn-primary mt-3">Voltar</a>

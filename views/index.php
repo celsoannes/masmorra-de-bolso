@@ -8,8 +8,22 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
-// Buscar produtos
-$stmt = $pdo->query("SELECT id, nome, caminho_imagem FROM produtos");
+// Não precisamos de pesquisa no carregamento da página, apenas no AJAX
+$pesquisa = isset($_GET['pesquisa']) ? $_GET['pesquisa'] : '';
+
+// Buscar produtos com base na pesquisa (caso haja)
+$sql = "SELECT id, nome, caminho_imagem FROM produtos";
+if ($pesquisa) {
+    $sql .= " WHERE nome LIKE :pesquisa";
+}
+
+$stmt = $pdo->prepare($sql);
+
+if ($pesquisa) {
+    $stmt->bindValue(':pesquisa', '%' . $pesquisa . '%');
+}
+
+$stmt->execute();
 $produtos = $stmt->fetchAll();
 ?>
 
@@ -42,6 +56,20 @@ $produtos = $stmt->fetchAll();
         <p>Escolha uma opção no menu acima para gerenciar estúdios ou peças.</p>
 
         <h3 class="mt-4">Lista de Produtos</h3>
+
+        <!-- Campo de Pesquisa -->
+        <form class="mb-4" action="index.php" method="get">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar produto" name="pesquisa" id="campo_pesquisa" value="<?= htmlspecialchars($pesquisa) ?>" autocomplete="off" list="sugestoes-list">
+                <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+            </div>
+            <datalist id="sugestoes-list">
+                <?php foreach ($produtos as $produto): ?>
+                    <option value="<?= htmlspecialchars($produto['nome']) ?>"></option>
+                <?php endforeach; ?>
+            </datalist>
+        </form>
+
         <table class="table table-hover mt-3">
             <thead class="table-dark">
                 <tr>
