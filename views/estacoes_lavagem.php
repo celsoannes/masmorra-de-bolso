@@ -3,7 +3,7 @@ session_start();
 require __DIR__ . '/../config/config.php';
 require __DIR__ . '/../includes/menu.php';
 
-// Modifique a query SQL para buscar o nome do produto de lavagem
+// Modifique a query SQL para buscar os tempos de lavagem e cura
 $stmt = $pdo->query("SELECT estacoes_lavagem.*, lavagem.Produto AS nome_lavagem FROM estacoes_lavagem LEFT JOIN lavagem ON estacoes_lavagem.lavagem_id = lavagem.id");
 $estacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -20,6 +20,8 @@ $estacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <th>Data de Aquisição</th>
                 <th>Valor do Bem (R$)</th>
                 <th>Tempo de Vida Útil (h)</th>
+                <th>Tempo de Lavagem</th>
+                <th>Tempo de Cura</th>
                 <th>Consumo (kWh)</th>
                 <th>Lavagem</th> <th>Ações</th>
             </tr>
@@ -33,6 +35,8 @@ $estacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= date('d/m/Y', strtotime($estacao['Data_Aquisicao'])) ?></td>
                     <td>R$ <?= number_format($estacao['Valor_do_Bem'], 2, ',', '.') ?></td>
                     <td><?= htmlspecialchars($estacao['Tempo_de_Vida_Util']) ?></td>
+                    <td><?= htmlspecialchars($estacao['tempo_lavagem']) ?></td>
+                    <td><?= htmlspecialchars($estacao['tempo_cura']) ?></td>
                     <td><?= htmlspecialchars($estacao['kWh']) ?></td>
                     <td><?= htmlspecialchars($estacao['nome_lavagem']) ?></td> <td>
                         <a href="../controllers/editar_estacao.php?id=<?= $estacao['ID'] ?>" class="btn btn-warning btn-sm">Editar</a>

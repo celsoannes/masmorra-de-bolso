@@ -20,10 +20,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $valor_bem = $_POST["valor_bem"];
     $tempo_vida_util = $_POST["tempo_vida_util"];
     $kwh = $_POST["kwh"];
-    $lavagem_id = $_POST["lavagem_id"]; // Adicionado
+    $lavagem_id = $_POST["lavagem_id"];
+    $tempo_lavagem = $_POST["tempo_lavagem"]; // Adicionado
+    $tempo_cura = $_POST["tempo_cura"]; // Adicionado
 
-    $stmt = $pdo->prepare("UPDATE estacoes_lavagem SET Marca=?, Modelo=?, Localizacao=?, Data_Aquisicao=?, Valor_do_Bem=?, Tempo_de_Vida_Util=?, kWh=?, lavagem_id=? WHERE ID=?"); // Adicionado
-    $stmt->execute([$marca, $modelo, $localizacao, $data_aquisicao, $valor_bem, $tempo_vida_util, $kwh, $lavagem_id, $id]); // Adicionado
+    $stmt = $pdo->prepare("UPDATE estacoes_lavagem SET Marca=?, Modelo=?, Localizacao=?, Data_Aquisicao=?, Valor_do_Bem=?, Tempo_de_Vida_Util=?, kWh=?, lavagem_id=?, tempo_lavagem=?, tempo_cura=? WHERE ID=?"); // Adicionado
+    $stmt->execute([$marca, $modelo, $localizacao, $data_aquisicao, $valor_bem, $tempo_vida_util, $kwh, $lavagem_id, $tempo_lavagem, $tempo_cura, $id]); // Adicionado
 
     header("Location: ../views/estacoes_lavagem.php");
     exit;
@@ -61,6 +63,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="mb-3">
             <label class="form-label">Tempo de Vida Útil (h)</label>
             <input type="number" name="tempo_vida_util" class="form-control" value="<?= htmlspecialchars($estacao['Tempo_de_Vida_Util']) ?>" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Tempo de Lavagem (hh:mm)</label>
+            <input type="time" name="tempo_lavagem" class="form-control" value="<?= htmlspecialchars($estacao['tempo_lavagem']) ?>">
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Tempo de Cura (hh:mm)</label>
+            <input type="time" name="tempo_cura" class="form-control" value="<?= htmlspecialchars($estacao['tempo_cura']) ?>">
         </div>
 
         <div class="mb-3">
