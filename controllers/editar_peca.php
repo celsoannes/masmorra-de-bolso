@@ -89,8 +89,8 @@ $materiais_resina = $pdo->query("SELECT TIPO FROM resinas ORDER BY TIPO")->fetch
             <select name="impressora" id="impressora" class="form-control" onchange="atualizarMateriais()">
                 <option value="">Selecione uma impressora</option>
                 <?php foreach ($impressoras as $imp): ?>
-                    <option value="<?= htmlspecialchars(trim($imp['modelo'])) ?>" data-tipo="<?= $imp['tipo'] ?>"
-                        <?= (trim($peca['impressora']) == trim($imp['modelo'])) ? 'selected' : '' ?>>
+                    <option value="<?= htmlspecialchars($imp['id']) ?>" data-tipo="<?= $imp['tipo'] ?>"
+                        <?= ($peca['impressora'] == $imp['id']) ? 'selected' : '' ?>>
                         <?= htmlspecialchars($imp['modelo']) ?> (<?= htmlspecialchars($imp['tipo']) ?>)
                     </option>
                 <?php endforeach; ?>
