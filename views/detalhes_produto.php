@@ -253,6 +253,7 @@ function calcularCustoProducao($peca) {
                 <thead>
                     <tr>
                         <th>Peça</th>
+                        <th>Quantidade</th>
                         <th>Custo de Energia (R$)</th>
                         <th>Custo de Material (R$)</th>
                         <th>Depreciação/Manutenção (R$)</th>
@@ -264,17 +265,21 @@ function calcularCustoProducao($peca) {
                 <tbody>
                     <?php foreach ($pecas as $peca): 
                         if ($peca['tipo_impressora'] == 'Resina') {
+                            $quantidade_peca = $peca['quantidade_peca']; // Quantidade de peças
+                    
                             $custo_energia_lavagem = calcularCustoEnergiaLavagem(
                                 $peca['consumo_estacao'], $peca['tempo_lavagem'], $peca['tempo_cura'], 
                                 $peca['kWh_energia'], $peca['ICMS'], $peca['PIS_PASEP'], $peca['COFINS'], $peca['TOTAL_horas']
-                            );
+                            ) * $quantidade_peca; // Multiplicando pela quantidade
+                    
                             $custo_material_lavagem = calcularCustoMaterialLavagem(
                                 $peca['quantidade_material'], $peca['valor_lavagem'], $peca['fator_consumo_lavagem']
-                            );
+                            ) * $quantidade_peca; // Multiplicando pela quantidade
+                    
                             $depreciacao_lavagem = calcularDepreciacaoLavagem(
                                 $peca['tempo_lavagem'], $peca['tempo_cura'], $peca['valor_estacao'], $peca['vida_util_estacao']
-                            );
-
+                            ) * $quantidade_peca; // Multiplicando pela quantidade
+                    
                             $custo_producao_lavagem = $custo_energia_lavagem + $custo_material_lavagem + $depreciacao_lavagem;
                             $valor_venda_lavagem = $custo_producao_lavagem + ($custo_producao_lavagem * ($peca['lucro_produto'] / 100));
                             $lucro_lavagem = $valor_venda_lavagem - $custo_producao_lavagem;
@@ -282,6 +287,7 @@ function calcularCustoProducao($peca) {
                     ?>
                     <tr>
                         <td><?= htmlspecialchars($peca['nome_peca']) ?></td>
+                        <td><?= htmlspecialchars($quantidade_peca) ?></td>
                         <td>R$ <?= number_format($custo_energia_lavagem, 2, ',', '.') ?></td>
                         <td>R$ <?= number_format($custo_material_lavagem, 2, ',', '.') ?></td>
                         <td>R$ <?= number_format($depreciacao_lavagem, 2, ',', '.') ?></td>
@@ -361,16 +367,20 @@ function calcularCustoProducao($peca) {
                         
                         foreach ($pecas as $peca) {
                             if ($peca['tipo_impressora'] == 'Resina') {
+                                $quantidade_peca = $peca['quantidade_peca']; // Quantidade de peças
+                        
                                 $custo_energia_lavagem = calcularCustoEnergiaLavagem(
                                     $peca['consumo_estacao'], $peca['tempo_lavagem'], $peca['tempo_cura'], 
                                     $peca['kWh_energia'], $peca['ICMS'], $peca['PIS_PASEP'], $peca['COFINS'], $peca['TOTAL_horas']
-                                );
+                                ) * $quantidade_peca;
+                        
                                 $custo_material_lavagem = calcularCustoMaterialLavagem(
                                     $peca['quantidade_material'], $peca['valor_lavagem'], $peca['fator_consumo_lavagem']
-                                );
+                                ) * $quantidade_peca;
+                        
                                 $depreciacao_lavagem = calcularDepreciacaoLavagem(
                                     $peca['tempo_lavagem'], $peca['tempo_cura'], $peca['valor_estacao'], $peca['vida_util_estacao']
-                                );
+                                ) * $quantidade_peca;
                         
                                 $custo_producao_lavagem = $custo_energia_lavagem + $custo_material_lavagem + $depreciacao_lavagem;
                                 $valor_venda_lavagem = $custo_producao_lavagem + ($custo_producao_lavagem * ($peca['lucro_produto'] / 100));
@@ -402,6 +412,9 @@ function calcularCustoProducao($peca) {
                         // Somando o lucro e o valor de venda da lavagem aos totais gerais
                         $total_lucro += $total_lucro_lavagem;
                         $total_valor_venda += $total_valor_venda_lavagem;
+                        
+                        // Somando o custo de produção da lavagem ao Total Custo de Produção
+                        $total_custo_producao += $total_custo_lavagem;
                     ?>
                     <td style="font-size: 1.2em;">R$ <?= number_format($total_custo_producao, 2, ',', '.') ?></td>
                     <td style="font-size: 1.2em;">R$ <?= number_format($total_custo_total, 2, ',', '.') ?></td>
@@ -438,6 +451,9 @@ function calcularCustoProducao($peca) {
             }
         </style>
 
+    </div>
+    <div class="mt-4 text-center">
+        <a href="../views/index.php" class="btn btn-secondary mt-3">Voltar</a>
     </div>
 </body>
 </html>
