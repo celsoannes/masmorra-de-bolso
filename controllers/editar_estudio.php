@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<div class="container mt-5">
+<div class="container mt-5 pt-5">
     <h2>Editar Estúdio</h2>
     <form method="POST">
         <div class="mb-3">

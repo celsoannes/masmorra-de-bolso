@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<div class="container mt-4">
+<div class="container mt-4 pt-5">
     <h2>Editar Estação de Lavagem</h2>
     <form method="POST">
         <div class="mb-3">

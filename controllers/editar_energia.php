@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<div class="container mt-4">
+<div class="container mt-4 pt-5">
     <h2>Editar Tarifa de Energia</h2>
     <form method="POST">
         <div class="mb-3">

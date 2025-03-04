@@ -55,7 +55,7 @@ $materiais_filamento = $pdo->query("SELECT TIPO FROM filamentos ORDER BY TIPO")-
 $materiais_resina = $pdo->query("SELECT TIPO FROM resinas ORDER BY TIPO")->fetchAll(PDO::FETCH_COLUMN);
 ?>
 
-<div class="container mt-5">
+<div class="container mt-5 pt-5">
     <h2>Editar Peças 3D</h2>
     <form method="post" enctype="multipart/form-data">
         <div class="mb-3">

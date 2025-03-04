@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<div class="container mt-4">
+<div class="container mt-4 pt-5">
     <h2>Editar Filamento</h2>
     <form method="POST">
         <div class="mb-3">
@@ -59,5 +59,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <a href="../views/filamentos.php" class="btn btn-secondary mt-3">Voltar</a>
     </form>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

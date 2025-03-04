@@ -83,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<div class="container mt-5">
+<div class="container mt-5 pt-5">
     <h2>Editar Produto</h2>
     <form method="post" enctype="multipart/form-data">
         <div class="mb-3">
