@@ -81,7 +81,7 @@ $estudios = $pdo->query("SELECT id, nome FROM estudios ORDER BY nome")->fetchAll
 $impressoras = $pdo->query("SELECT id, modelo, tipo FROM impressoras ORDER BY modelo")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="container mt-5">
+<div class="container mt-5 pt-5">
     <h2>Adicionar Peças 3D</h2>
     <form method="post" enctype="multipart/form-data">
         <div class="mb-3">

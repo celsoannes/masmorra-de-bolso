@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<div class="container mt-5">
+<div class="container mt-5 pt-5">
     <h2>Adicionar Estúdio</h2>
     <?php if ($erro) echo "<div class='alert alert-danger'>$erro</div>"; ?>
     <form method="POST">
