@@ -59,7 +59,7 @@
             <ul class="navbar-nav ms-auto">
                 <?php if (isset($_SESSION['usuario_nome'])): ?>
                     <li class="nav-item">
-                        <span class="navbar-text text-white">Bem-vindo, <?= htmlspecialchars($_SESSION['usuario_nome']) ?>!</span>
+                        <span class="navbar-text text-white d-flex align-items-center">Bem-vindo, <?= htmlspecialchars($_SESSION['usuario_nome']) ?>!</span>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link btn btn-danger btn-sm ms-3" href="logout.php">Sair</a>
