@@ -332,7 +332,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nome`, `email`, `senha_hash`, `ultimo_acesso`, `created_at`) VALUES
-(1, 'Celso Annes', 'celsoannes@gmail.com', '$2y$10$8I2jv4zRgK7Bs8ji26zYRufxSuWbadOEiD9ST/hAgij5brbeEXteW', '2025-03-04 01:51:48', '2025-03-02 05:19:43');
+(1, 'Mago Supremo', 'celsoannes@gmail.com', '$2y$10$8I2jv4zRgK7Bs8ji26zYRufxSuWbadOEiD9ST/hAgij5brbeEXteW', '2025-03-04 01:51:48', '2025-03-02 05:19:43');
 
 --
 -- Índices para tabelas despejadas
