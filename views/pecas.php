@@ -17,7 +17,7 @@ $stmt = $pdo->query("SELECT p.*, e.nome AS estudio_nome, i.modelo AS impressora_
 $pecas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="container mt-4">
+<div class="container mt-4 pt-5">
     <h2>Lista de Peças 3D</h2>
     <a href="../controllers/adicionar_peca.php" class="btn btn-success mb-3">Adicionar Peça</a>
     <table class="table table-bordered table-striped">

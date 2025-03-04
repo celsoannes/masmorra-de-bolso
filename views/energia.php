@@ -7,7 +7,7 @@ $stmt = $pdo->query("SELECT * FROM tabela_energia");
 $energias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="container mt-4">
+<div class="container mt-4 pt-5">
     <h2>Lista de Tarifas de Energia</h2>
     <a href="../controllers/adicionar_energia.php" class="btn btn-success mb-3">Adicionar Tarifa</a>
     <table class="table table-bordered table-striped">

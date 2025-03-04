@@ -8,7 +8,7 @@ $stmt = $pdo->query("SELECT estacoes_lavagem.*, lavagem.Produto AS nome_lavagem 
 $estacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="container mt-4">
+<div class="container mt-4 pt-5">
     <h2>Lista de Estações de Lavagem</h2>
     <a href="../controllers/adicionar_estacao.php" class="btn btn-success mb-3">Adicionar Estação</a>
     <table class="table table-bordered table-striped">

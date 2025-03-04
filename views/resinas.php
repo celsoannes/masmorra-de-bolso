@@ -7,7 +7,7 @@ $stmt = $pdo->query("SELECT * FROM resinas ORDER BY Tipo ASC");
 $resinas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="container mt-4">
+<div class="container mt-4 pt-5">
     <h2>Lista de Resinas</h2>
     <a href="../controllers/adicionar_resina.php" class="btn btn-success mb-3">Adicionar Nova Resina</a>
     <table class="table table-bordered table-striped">

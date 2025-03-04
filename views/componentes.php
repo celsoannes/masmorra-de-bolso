@@ -7,7 +7,7 @@ require __DIR__ . '/../includes/menu.php';
 $componentes = $pdo->query("SELECT * FROM componentes ORDER BY nome_material")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="container mt-4">
+<div class="container mt-4 pt-5">
     <h2>Lista de Componentes</h2>
     <a href="../controllers/adicionar_componente.php" class="btn btn-success mb-3">Adicionar Componente</a>
     <table class="table table-bordered table-striped">

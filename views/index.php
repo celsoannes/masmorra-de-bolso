@@ -53,7 +53,7 @@ $produtos = $stmt->fetchAll();
     </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container mt-5 pt-5">
         <h2>Bem-vindo ao Sistema de Gestão 3D</h2>
         <p>Escolha uma opção no menu acima para gerenciar estúdios ou peças.</p>
 
