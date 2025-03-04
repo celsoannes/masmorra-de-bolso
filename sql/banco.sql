@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Tempo de geração: 03/03/2025 às 22:54
+-- Tempo de geração: 04/03/2025 às 04:34
 -- Versão do servidor: 10.11.6-MariaDB-0+deb12u1
 -- Versão do PHP: 8.2.26
 
@@ -195,7 +195,7 @@ CREATE TABLE `pecas` (
 
 INSERT INTO `pecas` (`id`, `nome`, `estudio_id`, `nome_original`, `nome_arquivo`, `impressora`, `material`, `quantidade_material`, `tempo_impressao`, `created_at`, `imagem`) VALUES
 (24, 'Torre de Dados Toca do Hobbit Faminto com Tigela de Petiscos', 2, 'Hungry Halfling Snack Bowl Dice Tower', 'Hungry Halfling Snack Bowl Dice Tower v1.7.3mf', '1', 'Duo Color e Dourado', 358.00, '19:59:00', '2025-03-03 16:40:10', '../uploads/pecas/67c5db6a65ef6.png'),
-(26, 'Snackbowl Divider', 2, 'Snackbowl Divider', 'snack bowl dice divider v1.2.stl', '1', 'PLA PREMIUM', 53.00, '01:43:00', '2025-03-03 17:09:40', '../uploads/pecas/67c5e254347a5.png'),
+(26, 'Snackbowl Divider', 2, 'Snackbowl Divider', 'snack bowl dice divider v1.2.stl', '1', 'Rainbow Multicolor', 64.00, '01:58:00', '2025-03-03 17:09:40', '../uploads/pecas/67c5e254347a5.png'),
 (27, 'Berdolock', 8, 'Berdolock', 'Berdolock - Miniaturas para FtQ.stl', '2', 'Semi-Flexível (70/30)', 7.00, '02:12:00', '2025-03-03 20:23:42', '../uploads/pecas/67c60fce69403.png');
 
 -- --------------------------------------------------------
@@ -240,7 +240,7 @@ CREATE TABLE `produtos_componentes` (
 --
 
 INSERT INTO `produtos_componentes` (`id`, `produto_id`, `componente_id`, `quantidade`) VALUES
-(10, 8, 7, 1);
+(14, 8, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -260,9 +260,9 @@ CREATE TABLE `produtos_pecas` (
 --
 
 INSERT INTO `produtos_pecas` (`id`, `produto_id`, `peca_id`, `quantidade`) VALUES
-(15, 8, 24, 1),
-(16, 8, 26, 1),
-(17, 9, 27, 1);
+(32, 8, 24, 1),
+(33, 8, 26, 1),
+(34, 9, 27, 1);
 
 -- --------------------------------------------------------
 
@@ -332,7 +332,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nome`, `email`, `senha_hash`, `ultimo_acesso`, `created_at`) VALUES
-(1, 'Celso Annes', 'celsoannes@gmail.com', '$2y$10$8I2jv4zRgK7Bs8ji26zYRufxSuWbadOEiD9ST/hAgij5brbeEXteW', '2025-03-03 22:53:23', '2025-03-02 05:19:43');
+(1, 'Celso Annes', 'celsoannes@gmail.com', '$2y$10$8I2jv4zRgK7Bs8ji26zYRufxSuWbadOEiD9ST/hAgij5brbeEXteW', '2025-03-04 01:51:48', '2025-03-02 05:19:43');
 
 --
 -- Índices para tabelas despejadas
@@ -483,13 +483,13 @@ ALTER TABLE `produtos`
 -- AUTO_INCREMENT de tabela `produtos_componentes`
 --
 ALTER TABLE `produtos_componentes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de tabela `produtos_pecas`
 --
 ALTER TABLE `produtos_pecas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT de tabela `resinas`
