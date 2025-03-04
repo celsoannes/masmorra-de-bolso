@@ -82,7 +82,7 @@ $produtos = $stmt->fetchAll();
             <tbody>
                 <?php foreach ($produtos as $produto): ?>
                     <tr class="produto-lista" onclick="window.location.href='detalhes_produto.php?id=<?= $produto['id'] ?>'">
-                        <td><img src="<?= htmlspecialchars($produto['caminho_imagem']) ?>" alt="Imagem do Produto" class="produto-img"></td>
+                        <td><img src="<?= htmlspecialchars($produto['caminho_imagem']) ?>" alt="Imagem do Produto" class="img-thumbnail" width="80"></td>
                         <td><?= htmlspecialchars($produto['nome']) ?></td>
                     </tr>
                 <?php endforeach; ?>

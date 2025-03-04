@@ -21,7 +21,7 @@ $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <tbody>
             <?php foreach ($produtos as $produto): ?>
             <tr>
-                <td><img src="<?= htmlspecialchars($produto['caminho_imagem']) ?>" width="50"></td>
+                <td><img src="<?= htmlspecialchars($produto['caminho_imagem']) ?>" class="img-thumbnail" width="80"></td>
                 <td><?= htmlspecialchars($produto['nome']) ?></td>
                 <td>
                     <a href="../controllers/editar_produto.php?id=<?= $produto['id'] ?>" class="btn btn-primary">Editar</a>
