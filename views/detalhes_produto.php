@@ -31,7 +31,8 @@ $stmt_pecas = $pdo->prepare("
            i.Valor_do_Bem, i.Tempo_de_Vida_Util, pr.lucro AS lucro_produto,
            el.Marca AS marca_estacao, el.Modelo AS modelo_estacao, el.kWh AS consumo_estacao,
            el.tempo_lavagem, el.tempo_cura, el.Valor_do_Bem AS valor_estacao, el.Tempo_de_Vida_Util AS vida_util_estacao,
-           l.Valor_Litro AS valor_lavagem, l.Fator_Consumo AS fator_consumo_lavagem
+           l.Valor_Litro AS valor_lavagem, l.Fator_Consumo AS fator_consumo_lavagem,
+           pp.quantidade AS quantidade_peca -- Adicionando a quantidade de peças
     FROM pecas p
     JOIN impressoras i ON p.impressora = i.ID
     JOIN produtos_pecas pp ON p.id = pp.peca_id
@@ -121,10 +122,12 @@ function calcularDepreciacao($tempo_impressao, $Valor_do_Bem, $Tempo_de_Vida_Uti
 
 // Cálculo do custo de produção e lucro
 function calcularCustoProducao($peca) {
+    $quantidade_peca = $peca['quantidade_peca']; // Quantidade de peças
+
     $custo_energia = calcularCustoEnergia($peca['consumo_impressora'], $peca['tempo_impressao'], $peca['kWh_energia'], 
-                                          $peca['ICMS'], $peca['PIS_PASEP'], $peca['COFINS'], $peca['TOTAL_horas']);
-    $custo_material = calcularCustoMaterial($peca['tipo_impressora'], $peca['material_peca'], $peca['quantidade_material']);
-    $depreciacao = calcularDepreciacao($peca['tempo_impressao'], $peca['Valor_do_Bem'], $peca['Tempo_de_Vida_Util']);
+                                          $peca['ICMS'], $peca['PIS_PASEP'], $peca['COFINS'], $peca['TOTAL_horas']) * $quantidade_peca;
+    $custo_material = calcularCustoMaterial($peca['tipo_impressora'], $peca['material_peca'], $peca['quantidade_material']) * $quantidade_peca;
+    $depreciacao = calcularDepreciacao($peca['tempo_impressao'], $peca['Valor_do_Bem'], $peca['Tempo_de_Vida_Util']) * $quantidade_peca;
     
     // Cálculo do custo de produção
     $custo_producao = $custo_energia + $custo_material + $depreciacao;
@@ -141,7 +144,8 @@ function calcularCustoProducao($peca) {
         'depreciacao' => $depreciacao,
         'custo_producao' => $custo_producao,
         'valor_venda' => $valor_venda,
-        'lucro' => $lucro
+        'lucro' => $lucro,
+        'quantidade_peca' => $quantidade_peca // Retornando a quantidade de peças
     ];
 }
 ?>
@@ -216,6 +220,7 @@ function calcularCustoProducao($peca) {
             <thead>
                 <tr>
                     <th>Peça</th>
+                    <th>Quantidade</th>
                     <th>Custo de Energia (R$)</th>
                     <th>Custo de Material (R$)</th>
                     <th>Depreciação/Manutenção (R$)</th>
@@ -230,6 +235,7 @@ function calcularCustoProducao($peca) {
                 ?>
                 <tr>
                     <td><?= htmlspecialchars($peca['nome_peca']) ?></td>
+                    <td><?= htmlspecialchars($custos['quantidade_peca']) ?></td>
                     <td>R$ <?= number_format($custos['custo_energia'], 2, ',', '.') ?></td>
                     <td>R$ <?= number_format($custos['custo_material'], 2, ',', '.') ?></td>
                     <td>R$ <?= number_format($custos['depreciacao'], 2, ',', '.') ?></td>
