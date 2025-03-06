@@ -53,6 +53,17 @@
                     </ul>
                 </li>
 
+                <!-- Dropdown Categorias -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarCategorias" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Categorias
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarCategorias">
+                        <li><a class="dropdown-item" href="../views/categorias.php">Categorias</a></li>
+                        <li><a class="dropdown-item" href="../views/atributos.php">Atributos</a></li>
+                    </ul>
+                </li>
+
                 <li class="nav-item"><a class="nav-link" href="../views/energia.php">Energia</a></li>
             </ul>
             
