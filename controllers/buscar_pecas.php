@@ -1,20 +1,21 @@
 <?php
+session_start();
 require __DIR__ . '/../config/config.php';
 
-$termo = $_GET['term'] ?? '';
+$term = $_GET['term'] ?? '';
 
-$stmt = $pdo->prepare("SELECT id, nome FROM pecas WHERE nome LIKE ? LIMIT 10");
-$stmt->execute(["%$termo%"]);
+$stmt = $pdo->prepare("SELECT id, nome, imagem FROM pecas WHERE nome LIKE :term");
+$stmt->execute(['term' => '%' . $term . '%']);
 $pecas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$resultado = [];
-
+$response = [];
 foreach ($pecas as $peca) {
-    $resultado[] = [
-        "id" => $peca['id'],
-        "value" => $peca['nome'] // O campo "value" é necessário para o autocomplete do jQuery UI
+    $response[] = [
+        'id' => $peca['id'],
+        'value' => $peca['nome'],
+        'imagem' => $peca['imagem'] // Adiciona o caminho da imagem
     ];
 }
 
-echo json_encode($resultado);
+echo json_encode($response);
 ?>

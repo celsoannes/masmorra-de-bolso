@@ -1,8 +1,10 @@
 <?php
+error_reporting(E_ALL); // Exibe todos os erros
+ini_set('display_errors', 1); // Ativa a exibição de erros
 session_start();
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../includes/menu.php';
 
+// Verifica se o usuário está logado
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ../views/login.php");
     exit;
@@ -15,11 +17,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ultima_atualizacao = date("Y-m-d");
 
     $stmt = $pdo->prepare("INSERT INTO filamentos (Tipo, Fabricante, Valor_Kg, Ultima_Atualizacao) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$tipo, $fabricante, $valor_kg, $ultima_atualizacao]);
-
-    header("Location: ../views/filamentos.php");
-    exit;
+    if ($stmt->execute([$tipo, $fabricante, $valor_kg, $ultima_atualizacao])) {
+        header("Location: ../views/filamentos.php");
+        exit;
+    } else {
+        echo "<script>alert('Erro ao adicionar filamento.');</script>";
+    }
 }
+
+// Inclui o menu apenas após garantir que não há redirecionamento
+require __DIR__ . '/../includes/menu.php';
 ?>
 
 <div class="container mt-4 pt-5">

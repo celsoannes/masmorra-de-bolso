@@ -27,7 +27,7 @@ $stmt->execute([$id]);
 $atributos_produto = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Buscar peças associadas ao produto
-$stmt = $pdo->prepare("SELECT p.id, p.nome, pp.quantidade 
+$stmt = $pdo->prepare("SELECT p.id, p.nome, pp.quantidade, p.imagem 
                        FROM produtos_pecas pp 
                        JOIN pecas p ON pp.peca_id = p.id 
                        WHERE pp.produto_id = ?");
@@ -35,7 +35,7 @@ $stmt->execute([$id]);
 $pecas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Buscar componentes associados ao produto
-$stmt = $pdo->prepare("SELECT c.id, c.nome_material AS nome, pc.quantidade 
+$stmt = $pdo->prepare("SELECT c.id, c.nome_material AS nome, pc.quantidade, c.caminho_imagem 
                        FROM produtos_componentes pc 
                        JOIN componentes c ON pc.componente_id = c.id 
                        WHERE pc.produto_id = ?");
@@ -142,6 +142,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <table class="table table-striped mt-2">
                 <thead>
                     <tr>
+                        <th>Imagem</th> <!-- Nova coluna para a imagem -->
                         <th>Nome da Peça</th>
                         <th>Quantidade</th>
                         <th>Ação</th>
@@ -150,6 +151,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <tbody id="tabelaPecas">
                     <?php foreach ($pecas as $peca): ?>
                         <tr id="peca_<?= $peca['id'] ?>">
+                            <td>
+                                <?php if (!empty($peca['imagem'])): ?>
+                                    <img src="<?= htmlspecialchars($peca['imagem']) ?>" alt="Imagem da peça" class="img-thumbnail" style="max-width: 50px;">
+                                <?php else: ?>
+                                    <span>Sem imagem</span>
+                                <?php endif; ?>
+                            </td>
                             <td><?= htmlspecialchars($peca['nome']) ?></td>
                             <td><input type="number" name="pecas[<?= $peca['id'] ?>]" value="<?= $peca['quantidade'] ?>" min="1" class="form-control"></td>
                             <td><button type="button" class="btn btn-danger removerPeca" data-id="<?= $peca['id'] ?>">Remover</button></td>
@@ -166,6 +174,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <table class="table table-striped mt-2">
                 <thead>
                     <tr>
+                        <th>Imagem</th> <!-- Nova coluna para a imagem -->
                         <th>Nome do Componente</th>
                         <th>Quantidade</th>
                         <th>Ação</th>
@@ -174,6 +183,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <tbody id="tabelaComponentes">
                     <?php foreach ($componentes as $componente): ?>
                         <tr id="componente_<?= $componente['id'] ?>">
+                            <td>
+                                <?php if (!empty($componente['caminho_imagem'])): ?>
+                                    <img src="<?= htmlspecialchars($componente['caminho_imagem']) ?>" alt="Imagem do componente" class="img-thumbnail" style="max-width: 50px;">
+                                <?php else: ?>
+                                    <span>Sem imagem</span>
+                                <?php endif; ?>
+                            </td>
                             <td><?= htmlspecialchars($componente['nome']) ?></td>
                             <td><input type="number" name="componentes[<?= $componente['id'] ?>]" value="<?= $componente['quantidade'] ?>" min="1" class="form-control"></td>
                             <td><button type="button" class="btn btn-danger removerComponente" data-id="<?= $componente['id'] ?>">Remover</button></td>

@@ -1,20 +1,21 @@
 <?php
+session_start();
 require __DIR__ . '/../config/config.php';
 
-$termo = $_GET['term'] ?? '';
+$term = $_GET['term'] ?? '';
 
-$stmt = $pdo->prepare("SELECT id, nome_material FROM componentes WHERE nome_material LIKE ? LIMIT 10");
-$stmt->execute(["%$termo%"]);
+$stmt = $pdo->prepare("SELECT id, nome_material AS nome, caminho_imagem FROM componentes WHERE nome_material LIKE :term");
+$stmt->execute(['term' => '%' . $term . '%']);
 $componentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$resultado = [];
-
+$response = [];
 foreach ($componentes as $componente) {
-    $resultado[] = [
-        "id" => $componente['id'],
-        "value" => $componente['nome_material'] // O campo "value" é necessário para o autocomplete do jQuery UI
+    $response[] = [
+        'id' => $componente['id'],
+        'value' => $componente['nome'],
+        'imagem' => $componente['caminho_imagem'] // Adiciona o caminho da imagem
     ];
 }
 
-echo json_encode($resultado);
+echo json_encode($response);
 ?>

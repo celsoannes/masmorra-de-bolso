@@ -28,8 +28,8 @@ $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td><?= htmlspecialchars($produto['nome']) ?></td>
                 <td><?= htmlspecialchars($produto['categoria_nome']) ?></td>
                 <td>
-                    <a href="../controllers/editar_produto.php?id=<?= $produto['id'] ?>" class="btn btn-primary">Editar</a>
-                    <a href="../controllers/excluir_produto.php?id=<?= $produto['id'] ?>" class="btn btn-danger">Excluir</a>
+                    <a href="../controllers/editar_produto.php?id=<?= $produto['id'] ?>" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="../controllers/excluir_produto.php?id=<?= $produto['id'] ?>" class="btn btn-danger btn-sm">Excluir</a>
                 </td>
             </tr>
             <?php endforeach; ?>

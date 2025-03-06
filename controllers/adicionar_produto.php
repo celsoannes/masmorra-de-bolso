@@ -114,6 +114,7 @@ require __DIR__ . '/../includes/menu.php';
             <table class="table table-striped mt-2">
                 <thead>
                     <tr>
+                        <th>Imagem</th> <!-- Nova coluna para a imagem -->
                         <th>Nome da Peça</th>
                         <th>Quantidade</th>
                         <th>Ação</th>
@@ -130,6 +131,7 @@ require __DIR__ . '/../includes/menu.php';
             <table class="table table-striped mt-2">
                 <thead>
                     <tr>
+                        <th>Imagem</th> <!-- Nova coluna para a imagem -->
                         <th>Nome do Componente</th>
                         <th>Quantidade</th>
                         <th>Ação</th>
@@ -191,10 +193,14 @@ $(document).ready(function() {
         select: function(event, ui) {
             let pecaId = ui.item.id;
             let pecaNome = ui.item.value;
+            let pecaImagem = ui.item.imagem;
 
             if ($("#peca_" + pecaId).length === 0) {
                 $("#tabelaPecas").append(`
                     <tr id="peca_${pecaId}">
+                        <td>
+                            ${pecaImagem ? `<img src="${pecaImagem}" alt="Imagem da peça" class="img-thumbnail" style="max-width: 50px;">` : 'Sem imagem'}
+                        </td>
                         <td>${pecaNome}</td>
                         <td><input type="number" name="pecas[${pecaId}]" value="1" min="1" class="form-control"></td>
                         <td><button type="button" class="btn btn-danger removerPeca" data-id="${pecaId}">Remover</button></td>
@@ -213,10 +219,14 @@ $(document).ready(function() {
         select: function(event, ui) {
             let componenteId = ui.item.id;
             let componenteNome = ui.item.value;
+            let componenteImagem = ui.item.imagem;
 
             if ($("#componente_" + componenteId).length === 0) {
                 $("#tabelaComponentes").append(`
                     <tr id="componente_${componenteId}">
+                        <td>
+                            ${componenteImagem ? `<img src="${componenteImagem}" alt="Imagem do componente" class="img-thumbnail" style="max-width: 50px;">` : 'Sem imagem'}
+                        </td>
                         <td>${componenteNome}</td>
                         <td><input type="number" name="componentes[${componenteId}]" value="1" min="1" class="form-control"></td>
                         <td><button type="button" class="btn btn-danger removerComponente" data-id="${componenteId}">Remover</button></td>
