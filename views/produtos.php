@@ -3,7 +3,9 @@ session_start();
 require __DIR__ . '/../config/config.php';
 require __DIR__ . '/../includes/menu.php';
 
-$stmt = $pdo->query("SELECT * FROM produtos");
+$stmt = $pdo->query("SELECT p.*, c.nome AS categoria_nome 
+                     FROM produtos p 
+                     LEFT JOIN categorias c ON p.categoria_id = c.id");
 $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -13,8 +15,9 @@ $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
-                <th>Nome</th>
                 <th>Imagem</th>
+                <th>Nome</th>
+                <th>Categoria</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -23,6 +26,7 @@ $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <tr>
                 <td><img src="<?= htmlspecialchars($produto['caminho_imagem']) ?>" class="img-thumbnail" width="80"></td>
                 <td><?= htmlspecialchars($produto['nome']) ?></td>
+                <td><?= htmlspecialchars($produto['categoria_nome']) ?></td>
                 <td>
                     <a href="../controllers/editar_produto.php?id=<?= $produto['id'] ?>" class="btn btn-primary">Editar</a>
                     <a href="../controllers/excluir_produto.php?id=<?= $produto['id'] ?>" class="btn btn-danger">Excluir</a>

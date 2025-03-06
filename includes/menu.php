@@ -1,3 +1,15 @@
+<?php
+session_start();
+
+// Verifica se o usuário está logado
+if (!isset($_SESSION['usuario_id'])) {
+    // Redireciona para a página de login se o usuário não estiver logado
+    header("Location: ../views/login.php");
+    exit; // Certifique-se de que o script pare aqui
+}
+?>
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">

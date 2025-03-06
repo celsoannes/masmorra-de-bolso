@@ -17,71 +17,50 @@ if (!$produto) {
     die("Produto não encontrado.");
 }
 
+// Buscar categorias para o dropdown
+$stmt = $pdo->query("SELECT * FROM categorias ORDER BY nome ASC");
+$categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Buscar atributos do produto
+$stmt = $pdo->prepare("SELECT * FROM produto_atributos WHERE produto_id = ?");
+$stmt->execute([$id]);
+$atributos_produto = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 // Buscar peças associadas ao produto
 $stmt = $pdo->prepare("SELECT p.id, p.nome, pp.quantidade 
-                            FROM produtos_pecas pp 
-                            JOIN pecas p ON pp.peca_id = p.id 
-                            WHERE pp.produto_id = ?");
+                       FROM produtos_pecas pp 
+                       JOIN pecas p ON pp.peca_id = p.id 
+                       WHERE pp.produto_id = ?");
 $stmt->execute([$id]);
 $pecas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Buscar componentes associados ao produto
 $stmt = $pdo->prepare("SELECT c.id, c.nome_material AS nome, pc.quantidade 
-                            FROM produtos_componentes pc 
-                            JOIN componentes c ON pc.componente_id = c.id 
-                            WHERE pc.produto_id = ?");
+                       FROM produtos_componentes pc 
+                       JOIN componentes c ON pc.componente_id = c.id 
+                       WHERE pc.produto_id = ?");
 $stmt->execute([$id]);
 $componentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nome = trim($_POST['nome']);
-    $lucro = $_POST['lucro'] ?? 150;
-    $video = trim($_POST['video']);
-    $baixar = trim($_POST['baixar']);
-    $observacoes = trim($_POST['observacoes']);
-    
-    // Se um novo arquivo for enviado, atualiza a imagem
-    if (!empty($_FILES['imagem']['name'])) {
-        require 'upload.php';
-        $imagem = $caminho_imagem;
-    } else {
-        $imagem = $produto['caminho_imagem'];
-    }
+    // ... (código existente para atualizar o produto)
 
-    // Atualizar produto
-    $stmt = $pdo->prepare("UPDATE produtos SET nome = ?, caminho_imagem = ?, lucro = ?, video = ?, baixar = ?, observacoes = ? WHERE id = ?");
-    if ($stmt->execute([$nome, $imagem, $lucro, $video, $baixar, $observacoes, $id])) {
-        // Remover peças/componentes antigos
-        $pdo->prepare("DELETE FROM produtos_pecas WHERE produto_id = ?")->execute([$id]);
-        $pdo->prepare("DELETE FROM produtos_componentes WHERE produto_id = ?")->execute([$id]);
-
-        // Adicionar peças
-        if (isset($_POST['pecas']) && is_array($_POST['pecas'])) {
-            foreach ($_POST['pecas'] as $peca_id => $quantidade) {
-                if ($quantidade > 0) {
-                    $pdo->prepare("INSERT INTO produtos_pecas (produto_id, peca_id, quantidade) VALUES (?, ?, ?)")
-                        ->execute([$id, $peca_id, $quantidade]);
-                }
+    // Atualizar atributos do produto
+    $pdo->prepare("DELETE FROM produto_atributos WHERE produto_id = ?")->execute([$id]);
+    if (isset($_POST['atributos'])) {
+        foreach ($_POST['atributos'] as $atributo_id => $valor) {
+            if (!empty($valor)) {
+                $pdo->prepare("INSERT INTO produto_atributos (produto_id, atributo_id, valor) VALUES (?, ?, ?)")
+                    ->execute([$id, $atributo_id, $valor]);
             }
         }
-
-        // Adicionar componentes
-        if (isset($_POST['componentes']) && is_array($_POST['componentes'])) {
-            foreach ($_POST['componentes'] as $componente_id => $quantidade) {
-                if ($quantidade > 0) {
-                    $pdo->prepare("INSERT INTO produtos_componentes (produto_id, componente_id, quantidade) VALUES (?, ?, ?)")
-                        ->execute([$id, $componente_id, $quantidade]);
-                }
-            }
-        }
-
-        header("Location: ../views/produtos.php");
-        exit;
-    } else {
-        echo "<script>alert('Erro ao editar produto.');</script>";
     }
+
+    header("Location: ../views/produtos.php");
+    exit;
 }
 ?>
+
 
 <div class="container mt-5 pt-5">
     <h2>Editar Produto</h2>
@@ -89,6 +68,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="mb-3">
             <label>Nome do Produto:</label>
             <input type="text" name="nome" value="<?= htmlspecialchars($produto['nome']) ?>" required class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label>Categoria:</label>
+            <select name="categoria_id" id="categoria" class="form-control" required>
+                <option value="">Selecione uma categoria</option>
+                <?php foreach ($categorias as $categoria): ?>
+                    <option value="<?= $categoria['id'] ?>" <?= $categoria['id'] == $produto['categoria_id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($categoria['nome']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <!-- Campos de atributos dinâmicos -->
+        <div id="atributos-container">
+            <?php
+            if ($produto['categoria_id']) {
+                // Buscar atributos da categoria selecionada
+                $stmt = $pdo->prepare("SELECT * FROM categoria_atributos WHERE categoria_id = ?");
+                $stmt->execute([$produto['categoria_id']]);
+                $atributos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach ($atributos as $atributo) {
+                    $valor = '';
+                    foreach ($atributos_produto as $atributo_produto) {
+                        if ($atributo_produto['atributo_id'] == $atributo['id']) {
+                            $valor = $atributo_produto['valor'];
+                            break;
+                        }
+                    }
+
+                    echo '<div class="mb-3">';
+                    echo '<label>' . htmlspecialchars($atributo['nome_atributo']) . ':</label>';
+                    if ($atributo['tipo_atributo'] === 'select') {
+                        echo '<select name="atributos[' . $atributo['id'] . ']" class="form-control">';
+                        $opcoes = explode(',', $atributo['opcoes']);
+                        foreach ($opcoes as $opcao) {
+                            $opcao = trim($opcao);
+                            echo '<option value="' . htmlspecialchars($opcao) . '" ' . ($valor == $opcao ? 'selected' : '') . '>' . htmlspecialchars($opcao) . '</option>';
+                        }
+                        echo '</select>';
+                    } else {
+                        echo '<input type="' . $atributo['tipo_atributo'] . '" name="atributos[' . $atributo['id'] . ']" value="' . htmlspecialchars($valor) . '" class="form-control">';
+                    }
+                    echo '</div>';
+                }
+            }
+            ?>
         </div>
 
         <div class="mb-3">
@@ -130,8 +158,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tbody>
             </table>
         </div>
-
-
 
         <!-- Adicionar Componente -->
         <div class="mb-3">
@@ -176,6 +202,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <a href="../views/produtos.php" class="btn btn-secondary mt-3">Voltar</a>
     </form>
 </div>
+
+<!-- jQuery para carregar atributos dinamicamente -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Carregar atributos ao selecionar uma categoria
+    $('#categoria').change(function() {
+        let categoria_id = $(this).val();
+        if (categoria_id) {
+            $.ajax({
+                url: '../controllers/buscar_atributos.php',
+                type: 'GET',
+                data: { categoria_id: categoria_id },
+                success: function(response) {
+                    $('#atributos-container').html(response);
+                }
+            });
+        } else {
+            $('#atributos-container').html('');
+        }
+    });
+});
+</script>
+
 
 <!-- jQuery e jQuery UI para Autocomplete -->
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">

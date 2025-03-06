@@ -1,7 +1,12 @@
 <?php
 session_start();
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../includes/menu.php';
+
+// Verifica se o usuário está logado
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ../views/login.php");
+    exit;
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome = trim($_POST['nome']);
@@ -9,13 +14,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $baixar = trim($_POST['baixar']);
     $observacoes = trim($_POST['observacoes']);
     $lucro = isset($_POST['lucro']) ? floatval($_POST['lucro']) : 150; // Define 150% como padrão
+    $categoria_id = $_POST['categoria_id'];
 
     // Upload de imagem (se houver)
     require 'upload.php';
 
     // Inserir produto no banco de dados
-    $stmt = $pdo->prepare("INSERT INTO produtos (nome, caminho_imagem, video, baixar, observacoes, lucro) VALUES (?, ?, ?, ?, ?, ?)");
-    if ($stmt->execute([$nome, $caminho_imagem, $video, $baixar, $observacoes, $lucro])) {
+    $stmt = $pdo->prepare("INSERT INTO produtos (nome, caminho_imagem, video, baixar, observacoes, lucro, categoria_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    if ($stmt->execute([$nome, $caminho_imagem, $video, $baixar, $observacoes, $lucro, $categoria_id])) {
         $produto_id = $pdo->lastInsertId();
 
         // Adicionar peças ao produto
@@ -38,12 +44,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
+        // Adicionar atributos ao produto
+        if (isset($_POST['atributos'])) {
+            foreach ($_POST['atributos'] as $atributo_id => $valor) {
+                if (!empty($valor)) {
+                    $pdo->prepare("INSERT INTO produto_atributos (produto_id, atributo_id, valor) VALUES (?, ?, ?)")
+                        ->execute([$produto_id, $atributo_id, $valor]);
+                }
+            }
+        }
+
+        // Redirecionamento
         header("Location: ../views/produtos.php");
         exit;
     } else {
         echo "<script>alert('Erro ao adicionar produto.');</script>";
     }
 }
+
+// Buscar categorias para o dropdown
+$stmt = $pdo->query("SELECT * FROM categorias ORDER BY nome ASC");
+$categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Inclui o menu apenas após garantir que não há redirecionamento
+require __DIR__ . '/../includes/menu.php';
 ?>
 
 <div class="container mt-5 pt-5">
@@ -53,6 +77,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label>Nome do Produto:</label>
             <input type="text" name="nome" required class="form-control">
         </div>
+
+        <div class="mb-3">
+            <label>Categoria:</label>
+            <select name="categoria_id" id="categoria" class="form-control" required>
+                <option value="">Selecione uma categoria</option>
+                <?php foreach ($categorias as $categoria): ?>
+                    <option value="<?= $categoria['id'] ?>"><?= htmlspecialchars($categoria['nome']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <!-- Campos de atributos dinâmicos -->
+        <div id="atributos-container"></div>
 
         <div class="mb-3">
             <label>Vídeo (YouTube):</label>
@@ -116,6 +153,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a href="../views/produtos.php" class="btn btn-secondary mt-3">Voltar</a>
     </form>
 </div>
+
+<!-- jQuery para carregar atributos dinamicamente -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Carregar atributos ao selecionar uma categoria
+    $('#categoria').change(function() {
+        let categoria_id = $(this).val();
+        if (categoria_id) {
+            $.ajax({
+                url: '../controllers/buscar_atributos.php',
+                type: 'GET',
+                data: { categoria_id: categoria_id },
+                success: function(response) {
+                    $('#atributos-container').html(response);
+                }
+            });
+        } else {
+            $('#atributos-container').html('');
+        }
+    });
+});
+</script>
 
 <!-- jQuery e jQuery UI para Autocomplete -->
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
