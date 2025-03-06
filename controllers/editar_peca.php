@@ -1,7 +1,6 @@
 <?php
 session_start();
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../includes/menu.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: login.php");
@@ -53,6 +52,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // Buscar materiais filtrados pelo tipo de impressora
 $materiais_filamento = $pdo->query("SELECT TIPO FROM filamentos ORDER BY TIPO")->fetchAll(PDO::FETCH_COLUMN);
 $materiais_resina = $pdo->query("SELECT TIPO FROM resinas ORDER BY TIPO")->fetchAll(PDO::FETCH_COLUMN);
+
+// Inclui o menu apenas após garantir que não há redirecionamento
+require __DIR__ . '/../includes/menu.php';
 ?>
 
 <div class="container mt-5 pt-5">

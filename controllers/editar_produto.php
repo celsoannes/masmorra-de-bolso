@@ -1,7 +1,6 @@
 <?php
 session_start();
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../includes/menu.php';
 
 $id = $_GET['id'] ?? null;
 if (!$id || !is_numeric($id)) {
@@ -59,6 +58,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: ../views/produtos.php");
     exit;
 }
+
+// Inclui o menu apenas após garantir que não há redirecionamento
+require __DIR__ . '/../includes/menu.php';
 ?>
 
 

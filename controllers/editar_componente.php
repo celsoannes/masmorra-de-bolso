@@ -1,6 +1,5 @@
 <?php
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../includes/menu.php';
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("ID inválido.");
@@ -39,6 +38,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<script>alert('Erro ao editar componente!');</script>";
     }
 }
+
+// Inclui o menu apenas após garantir que não há redirecionamento
+require __DIR__ . '/../includes/menu.php';
 ?>
 
 <div class="container mt-5 pt-5">

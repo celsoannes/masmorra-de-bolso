@@ -1,7 +1,6 @@
 <?php
 session_start();
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../includes/menu.php';
 
 // Ativar erros para depuração
 error_reporting(E_ALL);
@@ -32,6 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: ../views/estudios.php");
     exit;
 }
+
+// Inclui o menu apenas após garantir que não há redirecionamento
+require __DIR__ . '/../includes/menu.php';
 ?>
 
 <div class="container mt-5 pt-5">
