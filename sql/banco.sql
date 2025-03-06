@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Tempo de geração: 04/03/2025 às 04:34
+-- Tempo de geração: 06/03/2025 às 21:12
 -- Versão do servidor: 10.11.6-MariaDB-0+deb12u1
 -- Versão do PHP: 8.2.26
 
@@ -20,6 +20,76 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `gestao3d`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `categorias`
+--
+
+CREATE TABLE `categorias` (
+  `id` int(11) NOT NULL,
+  `nome` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `categorias`
+--
+
+INSERT INTO `categorias` (`id`, `nome`) VALUES
+(1, 'Cenário'),
+(2, 'Torre de Dados'),
+(3, 'Miniatura'),
+(4, 'Action Figures'),
+(5, 'Decoração'),
+(6, 'Acessorios'),
+(7, 'Diorama');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `categoria_atributos`
+--
+
+CREATE TABLE `categoria_atributos` (
+  `id` int(11) NOT NULL,
+  `categoria_id` int(11) NOT NULL,
+  `nome_atributo` varchar(255) NOT NULL,
+  `tipo_atributo` enum('text','number','select') NOT NULL,
+  `opcoes` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `categoria_atributos`
+--
+
+INSERT INTO `categoria_atributos` (`id`, `categoria_id`, `nome_atributo`, `tipo_atributo`, `opcoes`) VALUES
+(1, 1, 'Tipo de Cenário', 'select', 'Vila,Cidade,Castelo,Masmorra,Floresta,Montanha,Pantano,Caverna,Templo,Ruínas'),
+(2, 1, 'Acabamento', 'select', 'Pintado,Primerizado,Não pintado'),
+(4, 3, 'Espécie', 'select', 'Humanoide,Humano,Elfo,Alto Elfo,Elfo da Floresta,Elfo Negro,Anão,Hobbit,Gnomo,Meio-Elfo,Meio-Orc,Tiefling,Aasimar,Draconato,Goblin,Orc,Troll,Ogro,Dragão Vermelho,Dragão Azul,Dragão Verde,Morto-vivo,Zumbi,Esqueleto,Vampiro,Demônio,Diabo,Elemental Fogo,Elemental Água,Elemental Terra,Elemental Ar,Besta,Lobo,Urso,Criatura mágica,Criatura planar,Construto'),
+(5, 3, 'Classe', 'select', 'Guerreiro,Bárbaro,Paladino,Cavaleiro,Monge,Mago,Feiticeiro,Bruxo,Clérigo,Druida,Ladino,Ranger,Bardo,Herói,Vilão,NPC comum'),
+(6, 3, 'Sexo', 'select', 'Masculino,Feminino,Não binário,Sem gênero/indeterminado'),
+(7, 3, 'Universo', 'select', 'Pathfinder,D&D,Magic,Star Wars,Marvel'),
+(8, 3, 'Acabamento', 'select', 'Pintado,Primerizado,Não pintado'),
+(9, 3, 'Tipo de Criatura', 'select', 'Humanoide,Monstro,Besta,Elemental,Morto-vivo'),
+(10, 3, 'Categoria', 'select', 'Personagem jogador (PJ),Personagem não jogador (NPC),Monstro,Criatura selvagem,Objeto mágico'),
+(12, 2, 'Universo', 'select', 'Pathfinder,D&D,Magic,Star Wars,Marvel,Senhor dos Anéis'),
+(13, 2, 'Tema', 'select', 'Medieval,Fantasia,Futurista,Horror,Abstrato'),
+(14, 2, 'Acabamento', 'select', 'Pintado,Primerizado,Não pintado'),
+(16, 5, 'Tema', 'select', 'Fantasia medieval,Steampunk,Geométrico,Abstrato,Natureza,Plantas,Animais,Minimalista,Retrô/Vintage,Moderno,Espacial/Sci-fi,Cultura Pop,Filmes,Séries,Jogos'),
+(17, 5, 'Tipo de Decoração', 'select', 'Escultura,Vaso,Suporte para Plantas,Suporte para Livros,Luminária,Quadro/Painel,Objeto de mesa,Decoração de parede,Estatueta'),
+(18, 5, 'Acabamento', 'select', 'Pintado,Primerizado,Não pintado'),
+(20, 6, 'Tipo de Acessório', 'select', 'Suporte para celular,Suporte de fone de ouvido,Organizador de mesa,Organizador de gaveta,Chaveiro,Bijuteria,Ferramenta,Ferramentas,Acessórios para jogos,Acessórios para cosplay'),
+(21, 6, 'Acabamento', 'select', 'Pintado,Primerizado,Não pintado'),
+(23, 7, 'Tema', 'select', 'Medieval,Fantasia,Futurista,Horror,Abstrato'),
+(24, 7, 'Universo', 'select', 'Pathfinder,D&D,Magic,Star Wars,Marvel'),
+(25, 7, 'Acabamento', 'select', 'Pintado,Primerizado,Não pintado'),
+(27, 3, 'Espécie', 'select', 'Humanoide, Humano, Elfo, Alto Elfo, Elfo da Floresta, Elfo Negro, Anão, Hobbit, Gnomo, Meio-Elfo, Meio-Orc, Tiefling, Aasimar, Draconato, Goblin, Orc, Troll, Ogro, Dragão Vermelho, Dragão Azul, Dragão Verde, Morto-vivo, Zumbi, Esqueleto, Vampiro, Demônio, Diabo, Elemental Fogo, Elemental Água, - Elemental Terra, Elemental Ar, Besta, Lobo, urso, Criatura mágica, Criatura planar, Construto'),
+(28, 3, 'Dimensões', 'text', 'Altura, Largura, Profundidade'),
+(29, 1, 'Dimensões', 'text', 'Altura, Largura, Profundidade'),
+(30, 5, 'Dimensões', 'text', 'Altura, Largura, Profundidade'),
+(31, 2, 'Dimensões', 'text', 'Altura, Largura, Profundidade'),
+(32, 6, 'Dimensões', 'text', 'Altura, Largura, Profundidade');
 
 -- --------------------------------------------------------
 
@@ -119,7 +189,8 @@ INSERT INTO `filamentos` (`id`, `Tipo`, `Fabricante`, `Valor_Kg`, `Ultima_Atuali
 (3, 'Velvet', 'Voolt', 117.90, '2025-03-03'),
 (4, 'Rainbow Multicolor', 'Voolt', 139.90, '2025-03-04'),
 (5, 'Duo Color e Dourado', 'Voolt', 137.90, '2025-03-05'),
-(6, 'Cosmo Multicolor', 'Voolt', 127.90, '2025-03-01');
+(6, 'Cosmo Multicolor', 'Voolt', 127.90, '2025-03-01'),
+(23, '123', '12312', 123.00, '2025-03-06');
 
 -- --------------------------------------------------------
 
@@ -144,8 +215,8 @@ CREATE TABLE `impressoras` (
 --
 
 INSERT INTO `impressoras` (`ID`, `Marca`, `Modelo`, `Tipo`, `Localizacao`, `Data_Aquisicao`, `Valor_do_Bem`, `Tempo_de_Vida_Util`, `kWh`) VALUES
-(1, 'Bambu Lab', 'A1', 'Filamento', 'Laboratório', '2024-01-15', 5999.00, 8766, 0.500),
-(2, 'Elegoo', 'Saturn 3 Ultra', 'Resina', 'Laboratório', '2024-02-20', 3295.99, 2000, 0.072);
+(1, 'Bambu Lab', 'A1', 'Filamento', 'Laboratório', '2024-01-15', 5999.00, 8766, 0.095),
+(2, 'Elegoo', 'Saturn 3 Ultra', 'Resina', 'Laboratório', '2024-02-20', 3295.99, 2000, 0.180);
 
 -- --------------------------------------------------------
 
@@ -211,16 +282,17 @@ CREATE TABLE `produtos` (
   `video` varchar(255) DEFAULT NULL,
   `baixar` varchar(255) DEFAULT NULL,
   `observacoes` text DEFAULT NULL,
-  `lucro` decimal(10,2) NOT NULL DEFAULT 150.00
+  `lucro` decimal(10,2) NOT NULL DEFAULT 150.00,
+  `categoria_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Despejando dados para a tabela `produtos`
 --
 
-INSERT INTO `produtos` (`id`, `nome`, `caminho_imagem`, `video`, `baixar`, `observacoes`, `lucro`) VALUES
-(8, 'Torre de Dados Toca do Hobbit Faminto com Tigela de Petiscos', '../uploads/imagens/d7914ebf4f752e858b0bce859a9f9968.png', 'http://192.168.0.220/controllers/adicionar_produto.php', 'http://192.168.0.220/controllers/adicionar_produto.php', 'http://192.168.0.220/controllers/adicionar_produto.php', 150.00),
-(9, 'Berdolock - Miniaturas para FtQ', '../uploads/imagens/e38661b2bd06e68dca2fe48d6dbcaa4a.png', 'http://192.168.0.220/controllers/adicionar_produto.php', 'http://192.168.0.220/controllers/adicionar_produto.php', '', 150.00);
+INSERT INTO `produtos` (`id`, `nome`, `caminho_imagem`, `video`, `baixar`, `observacoes`, `lucro`, `categoria_id`) VALUES
+(21, 'Torre de Dados Toca do Hobbit Faminto com Tigela de Petiscos', '../uploads/imagens/5305cf8dd7955fab9b292142d3184b35.png', 'https://www.youtube.com/', 'https://www.youtube.com/', 'https://www.youtube.com/', 200.00, 2),
+(22, 'teste', '', '', '', '', 150.00, 6);
 
 -- --------------------------------------------------------
 
@@ -240,7 +312,7 @@ CREATE TABLE `produtos_componentes` (
 --
 
 INSERT INTO `produtos_componentes` (`id`, `produto_id`, `componente_id`, `quantidade`) VALUES
-(14, 8, 7, 1);
+(20, 21, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -260,9 +332,34 @@ CREATE TABLE `produtos_pecas` (
 --
 
 INSERT INTO `produtos_pecas` (`id`, `produto_id`, `peca_id`, `quantidade`) VALUES
-(32, 8, 24, 1),
-(33, 8, 26, 1),
-(34, 9, 27, 1);
+(42, 21, 24, 1),
+(43, 22, 24, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `produto_atributos`
+--
+
+CREATE TABLE `produto_atributos` (
+  `id` int(11) NOT NULL,
+  `produto_id` int(11) NOT NULL,
+  `atributo_id` int(11) NOT NULL,
+  `valor` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `produto_atributos`
+--
+
+INSERT INTO `produto_atributos` (`id`, `produto_id`, `atributo_id`, `valor`) VALUES
+(21, 21, 12, 'Senhor dos Anéis'),
+(22, 21, 13, 'Fantasia'),
+(23, 21, 14, 'Não pintado'),
+(24, 21, 31, '20'),
+(28, 22, 20, 'Organizador de mesa'),
+(29, 22, 21, 'Primerizado'),
+(30, 22, 32, '123');
 
 -- --------------------------------------------------------
 
@@ -286,7 +383,9 @@ INSERT INTO `resinas` (`id`, `Tipo`, `Fabricante`, `Valor_Kg`, `Ultima_Atualizac
 (1, 'Abs-Like Mk3', 'M.I.H.', 148.06, '2025-03-01'),
 (2, 'Resina Flexível', 'M.I.H.', 228.88, '2025-03-01'),
 (3, 'Semi-Flexível (70/30)', 'M.I.H.', 172.30, '2025-03-01'),
-(4, 'Basic', 'F3D', 99.00, '2025-03-01');
+(4, 'Basic', 'F3D', 99.00, '2025-03-01'),
+(12, '24234', '23423', 234.00, '2025-03-06'),
+(13, '123', '123', 123.00, '2025-03-06');
 
 -- --------------------------------------------------------
 
@@ -332,11 +431,24 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nome`, `email`, `senha_hash`, `ultimo_acesso`, `created_at`) VALUES
-(1, 'Mago Supremo', 'celsoannes@gmail.com', '$2y$10$8I2jv4zRgK7Bs8ji26zYRufxSuWbadOEiD9ST/hAgij5brbeEXteW', '2025-03-04 01:51:48', '2025-03-02 05:19:43');
+(1, 'Mago Supremo', 'celsoannes@gmail.com', '$2y$10$8I2jv4zRgK7Bs8ji26zYRufxSuWbadOEiD9ST/hAgij5brbeEXteW', '2025-03-06 18:09:07', '2025-03-02 05:19:43');
 
 --
 -- Índices para tabelas despejadas
 --
+
+--
+-- Índices de tabela `categorias`
+--
+ALTER TABLE `categorias`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `categoria_atributos`
+--
+ALTER TABLE `categoria_atributos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `categoria_id` (`categoria_id`);
 
 --
 -- Índices de tabela `componentes`
@@ -390,7 +502,8 @@ ALTER TABLE `pecas`
 -- Índices de tabela `produtos`
 --
 ALTER TABLE `produtos`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_produto_categoria` (`categoria_id`);
 
 --
 -- Índices de tabela `produtos_componentes`
@@ -407,6 +520,14 @@ ALTER TABLE `produtos_pecas`
   ADD PRIMARY KEY (`id`),
   ADD KEY `produto_id` (`produto_id`),
   ADD KEY `peca_id` (`peca_id`);
+
+--
+-- Índices de tabela `produto_atributos`
+--
+ALTER TABLE `produto_atributos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `produto_id` (`produto_id`),
+  ADD KEY `atributo_id` (`atributo_id`);
 
 --
 -- Índices de tabela `resinas`
@@ -432,6 +553,18 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- AUTO_INCREMENT de tabela `categorias`
+--
+ALTER TABLE `categorias`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT de tabela `categoria_atributos`
+--
+ALTER TABLE `categoria_atributos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+
+--
 -- AUTO_INCREMENT de tabela `componentes`
 --
 ALTER TABLE `componentes`
@@ -453,7 +586,7 @@ ALTER TABLE `estudios`
 -- AUTO_INCREMENT de tabela `filamentos`
 --
 ALTER TABLE `filamentos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de tabela `impressoras`
@@ -477,25 +610,31 @@ ALTER TABLE `pecas`
 -- AUTO_INCREMENT de tabela `produtos`
 --
 ALTER TABLE `produtos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de tabela `produtos_componentes`
 --
 ALTER TABLE `produtos_componentes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de tabela `produtos_pecas`
 --
 ALTER TABLE `produtos_pecas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+
+--
+-- AUTO_INCREMENT de tabela `produto_atributos`
+--
+ALTER TABLE `produto_atributos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de tabela `resinas`
 --
 ALTER TABLE `resinas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de tabela `tabela_energia`
@@ -514,6 +653,12 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- Restrições para tabelas `categoria_atributos`
+--
+ALTER TABLE `categoria_atributos`
+  ADD CONSTRAINT `categoria_atributos_ibfk_1` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`) ON DELETE CASCADE;
+
+--
 -- Restrições para tabelas `estacoes_lavagem`
 --
 ALTER TABLE `estacoes_lavagem`
@@ -524,6 +669,12 @@ ALTER TABLE `estacoes_lavagem`
 --
 ALTER TABLE `pecas`
   ADD CONSTRAINT `pecas_ibfk_1` FOREIGN KEY (`estudio_id`) REFERENCES `estudios` (`id`) ON DELETE SET NULL;
+
+--
+-- Restrições para tabelas `produtos`
+--
+ALTER TABLE `produtos`
+  ADD CONSTRAINT `fk_produto_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`) ON DELETE SET NULL;
 
 --
 -- Restrições para tabelas `produtos_componentes`
@@ -538,6 +689,13 @@ ALTER TABLE `produtos_componentes`
 ALTER TABLE `produtos_pecas`
   ADD CONSTRAINT `produtos_pecas_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `produtos_pecas_ibfk_2` FOREIGN KEY (`peca_id`) REFERENCES `pecas` (`id`) ON DELETE CASCADE;
+
+--
+-- Restrições para tabelas `produto_atributos`
+--
+ALTER TABLE `produto_atributos`
+  ADD CONSTRAINT `produto_atributos_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `produto_atributos_ibfk_2` FOREIGN KEY (`atributo_id`) REFERENCES `categoria_atributos` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
