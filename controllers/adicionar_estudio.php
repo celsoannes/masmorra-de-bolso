@@ -1,7 +1,6 @@
 <?php
 session_start();
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../includes/menu.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ../views/login.php");
@@ -26,6 +25,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $erro = "Nome do estúdio é obrigatório.";
     }
 }
+
+// Inclui o menu apenas após garantir que não há redirecionamento
+require __DIR__ . '/../includes/menu.php';
 ?>
 
 <div class="container mt-5 pt-5">

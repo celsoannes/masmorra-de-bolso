@@ -1,7 +1,6 @@
 <?php
 session_start();
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../includes/menu.php';
 
 // Buscar opções de lavagem
 $stmt_lavagem = $pdo->query("SELECT id, Produto FROM lavagem");
@@ -25,6 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: ../views/estacoes_lavagem.php");
     exit;
 }
+
+// Inclui o menu apenas após garantir que não há redirecionamento
+require __DIR__ . '/../includes/menu.php';
 ?>
 
 

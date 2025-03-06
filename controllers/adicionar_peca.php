@@ -1,7 +1,6 @@
 <?php
 session_start();
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../includes/menu.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: login.php");
@@ -79,6 +78,9 @@ $estudios = $pdo->query("SELECT id, nome FROM estudios ORDER BY nome")->fetchAll
 
 // Pega as impressoras disponíveis
 $impressoras = $pdo->query("SELECT id, modelo, tipo FROM impressoras ORDER BY modelo")->fetchAll(PDO::FETCH_ASSOC);
+
+// Inclui o menu apenas após garantir que não há redirecionamento
+require __DIR__ . '/../includes/menu.php';
 ?>
 
 <div class="container mt-5 pt-5">

@@ -1,6 +1,5 @@
 <?php
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../includes/menu.php';
 
 // Verifica a conexão com o banco de dados
 if (!$pdo) {
@@ -45,6 +44,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<script>alert('Erro no banco de dados: " . $e->getMessage() . "');</script>";
     }
 }
+
+// Inclui o menu apenas após garantir que não há redirecionamento
+require __DIR__ . '/../includes/menu.php';
 ?>
 
 <div class="container mt-5 pt-5">

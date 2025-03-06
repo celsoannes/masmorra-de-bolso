@@ -1,7 +1,6 @@
 <?php
 session_start();
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../includes/menu.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $prestadora = $_POST["prestadora"];
@@ -20,6 +19,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: ../views/energia.php");
     exit;
 }
+
+// Inclui o menu apenas após garantir que não há redirecionamento
+require __DIR__ . '/../includes/menu.php';
 ?>
 
 <div class="container mt-4 pt-5">
