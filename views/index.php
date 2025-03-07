@@ -1,7 +1,6 @@
 <?php
 session_start();
 require __DIR__ . '/../config/config.php';
-require __DIR__ . '/../includes/menu.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: login.php");
@@ -25,6 +24,9 @@ if ($pesquisa) {
 
 $stmt->execute();
 $produtos = $stmt->fetchAll();
+
+// Inclui o menu apenas após garantir que não há redirecionamento
+require __DIR__ . '/../includes/menu.php';
 ?>
 
 <!DOCTYPE html>
