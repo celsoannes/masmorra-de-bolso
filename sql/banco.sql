@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Tempo de geração: 06/03/2025 às 21:12
+-- Tempo de geração: 07/03/2025 às 00:31
 -- Versão do servidor: 10.11.6-MariaDB-0+deb12u1
 -- Versão do PHP: 8.2.26
 
@@ -189,8 +189,7 @@ INSERT INTO `filamentos` (`id`, `Tipo`, `Fabricante`, `Valor_Kg`, `Ultima_Atuali
 (3, 'Velvet', 'Voolt', 117.90, '2025-03-03'),
 (4, 'Rainbow Multicolor', 'Voolt', 139.90, '2025-03-04'),
 (5, 'Duo Color e Dourado', 'Voolt', 137.90, '2025-03-05'),
-(6, 'Cosmo Multicolor', 'Voolt', 127.90, '2025-03-01'),
-(23, '123', '12312', 123.00, '2025-03-06');
+(6, 'Cosmo Multicolor', 'Voolt', 127.90, '2025-03-01');
 
 -- --------------------------------------------------------
 
@@ -266,7 +265,7 @@ CREATE TABLE `pecas` (
 
 INSERT INTO `pecas` (`id`, `nome`, `estudio_id`, `nome_original`, `nome_arquivo`, `impressora`, `material`, `quantidade_material`, `tempo_impressao`, `created_at`, `imagem`) VALUES
 (24, 'Torre de Dados Toca do Hobbit Faminto com Tigela de Petiscos', 2, 'Hungry Halfling Snack Bowl Dice Tower', 'Hungry Halfling Snack Bowl Dice Tower v1.7.3mf', '1', 'Duo Color e Dourado', 358.00, '19:59:00', '2025-03-03 16:40:10', '../uploads/pecas/67c5db6a65ef6.png'),
-(26, 'Snackbowl Divider', 2, 'Snackbowl Divider', 'snack bowl dice divider v1.2.stl', '1', 'Rainbow Multicolor', 64.00, '01:58:00', '2025-03-03 17:09:40', '../uploads/pecas/67c5e254347a5.png'),
+(26, 'Bandeja Organizadora de Dados', 2, 'Snackbowl Divider', 'snack bowl dice divider v1.2.stl', '1', 'Rainbow Multicolor', 64.00, '01:58:00', '2025-03-03 17:09:40', '../uploads/pecas/67c5e254347a5.png'),
 (27, 'Berdolock', 8, 'Berdolock', 'Berdolock - Miniaturas para FtQ.stl', '2', 'Semi-Flexível (70/30)', 7.00, '02:12:00', '2025-03-03 20:23:42', '../uploads/pecas/67c60fce69403.png');
 
 -- --------------------------------------------------------
@@ -292,7 +291,7 @@ CREATE TABLE `produtos` (
 
 INSERT INTO `produtos` (`id`, `nome`, `caminho_imagem`, `video`, `baixar`, `observacoes`, `lucro`, `categoria_id`) VALUES
 (21, 'Torre de Dados Toca do Hobbit Faminto com Tigela de Petiscos', '../uploads/imagens/5305cf8dd7955fab9b292142d3184b35.png', 'https://www.youtube.com/', 'https://www.youtube.com/', 'https://www.youtube.com/', 200.00, 2),
-(22, 'teste', '', '', '', '', 150.00, 6);
+(23, 'teste', '', '', '', '', 150.00, 6);
 
 -- --------------------------------------------------------
 
@@ -333,7 +332,7 @@ CREATE TABLE `produtos_pecas` (
 
 INSERT INTO `produtos_pecas` (`id`, `produto_id`, `peca_id`, `quantidade`) VALUES
 (42, 21, 24, 1),
-(43, 22, 24, 1);
+(44, 23, 24, 1);
 
 -- --------------------------------------------------------
 
@@ -357,9 +356,14 @@ INSERT INTO `produto_atributos` (`id`, `produto_id`, `atributo_id`, `valor`) VAL
 (22, 21, 13, 'Fantasia'),
 (23, 21, 14, 'Não pintado'),
 (24, 21, 31, '20'),
-(28, 22, 20, 'Organizador de mesa'),
-(29, 22, 21, 'Primerizado'),
-(30, 22, 32, '123');
+(33, 23, 4, 'Humanoide'),
+(34, 23, 5, 'Guerreiro'),
+(35, 23, 6, 'Masculino'),
+(36, 23, 7, 'Pathfinder'),
+(37, 23, 8, 'Pintado'),
+(38, 23, 9, 'Humanoide'),
+(39, 23, 10, 'Personagem jogador (PJ)'),
+(40, 23, 27, 'Humanoide');
 
 -- --------------------------------------------------------
 
@@ -383,9 +387,7 @@ INSERT INTO `resinas` (`id`, `Tipo`, `Fabricante`, `Valor_Kg`, `Ultima_Atualizac
 (1, 'Abs-Like Mk3', 'M.I.H.', 148.06, '2025-03-01'),
 (2, 'Resina Flexível', 'M.I.H.', 228.88, '2025-03-01'),
 (3, 'Semi-Flexível (70/30)', 'M.I.H.', 172.30, '2025-03-01'),
-(4, 'Basic', 'F3D', 99.00, '2025-03-01'),
-(12, '24234', '23423', 234.00, '2025-03-06'),
-(13, '123', '123', 123.00, '2025-03-06');
+(4, 'Basic', 'F3D', 99.00, '2025-03-01');
 
 -- --------------------------------------------------------
 
@@ -431,7 +433,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nome`, `email`, `senha_hash`, `ultimo_acesso`, `created_at`) VALUES
-(1, 'Mago Supremo', 'celsoannes@gmail.com', '$2y$10$8I2jv4zRgK7Bs8ji26zYRufxSuWbadOEiD9ST/hAgij5brbeEXteW', '2025-03-06 18:09:07', '2025-03-02 05:19:43');
+(1, 'Mago Supremo', 'celsoannes@gmail.com', '$2y$10$8I2jv4zRgK7Bs8ji26zYRufxSuWbadOEiD9ST/hAgij5brbeEXteW', '2025-03-07 00:12:18', '2025-03-02 05:19:43');
 
 --
 -- Índices para tabelas despejadas
@@ -610,7 +612,7 @@ ALTER TABLE `pecas`
 -- AUTO_INCREMENT de tabela `produtos`
 --
 ALTER TABLE `produtos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de tabela `produtos_componentes`
@@ -622,19 +624,19 @@ ALTER TABLE `produtos_componentes`
 -- AUTO_INCREMENT de tabela `produtos_pecas`
 --
 ALTER TABLE `produtos_pecas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT de tabela `produto_atributos`
 --
 ALTER TABLE `produto_atributos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT de tabela `resinas`
 --
 ALTER TABLE `resinas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de tabela `tabela_energia`
