@@ -42,7 +42,48 @@ $stmt->execute([$id]);
 $componentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // ... (código existente para atualizar o produto)
+    // Coletar dados do formulário
+    $nome = trim($_POST['nome']);
+    $video = trim($_POST['video']);
+    $baixar = trim($_POST['baixar']);
+    $observacoes = trim($_POST['observacoes']);
+    $lucro = isset($_POST['lucro']) ? floatval($_POST['lucro']) : 150; // Define 150% como padrão
+    $categoria_id = $_POST['categoria_id'];
+
+    // Upload de imagem (se houver)
+    $caminho_imagem = $produto['caminho_imagem']; // Mantém a imagem atual por padrão
+    if (!empty($_FILES['imagem']['name'])) {
+        require __DIR__ . '/upload.php'; // Inclui o script de upload
+        // $caminho_imagem será atualizado pelo script de upload
+    }
+
+    // Atualizar produto no banco de dados
+    $stmt = $pdo->prepare("UPDATE produtos 
+                           SET nome = ?, caminho_imagem = ?, video = ?, baixar = ?, observacoes = ?, lucro = ?, categoria_id = ? 
+                           WHERE id = ?");
+    $stmt->execute([$nome, $caminho_imagem, $video, $baixar, $observacoes, $lucro, $categoria_id, $id]);
+
+    // Atualizar peças associadas ao produto
+    $pdo->prepare("DELETE FROM produtos_pecas WHERE produto_id = ?")->execute([$id]);
+    if (isset($_POST['pecas']) && is_array($_POST['pecas'])) {
+        foreach ($_POST['pecas'] as $peca_id => $quantidade) {
+            if ($quantidade > 0) {
+                $pdo->prepare("INSERT INTO produtos_pecas (produto_id, peca_id, quantidade) VALUES (?, ?, ?)")
+                    ->execute([$id, $peca_id, $quantidade]);
+            }
+        }
+    }
+
+    // Atualizar componentes associados ao produto
+    $pdo->prepare("DELETE FROM produtos_componentes WHERE produto_id = ?")->execute([$id]);
+    if (isset($_POST['componentes']) && is_array($_POST['componentes'])) {
+        foreach ($_POST['componentes'] as $componente_id => $quantidade) {
+            if ($quantidade > 0) {
+                $pdo->prepare("INSERT INTO produtos_componentes (produto_id, componente_id, quantidade) VALUES (?, ?, ?)")
+                    ->execute([$id, $componente_id, $quantidade]);
+            }
+        }
+    }
 
     // Atualizar atributos do produto
     $pdo->prepare("DELETE FROM produto_atributos WHERE produto_id = ?")->execute([$id]);
@@ -55,6 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+    // Redirecionar para a lista de produtos
     header("Location: ../views/produtos.php");
     exit;
 }

@@ -9,9 +9,7 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 
 // Não precisamos de pesquisa no carregamento da página, apenas no AJAX
-//$pesquisa = isset($_GET['pesquisa']) ? $_GET['pesquisa'] : '';
 $pesquisa = trim($_GET['pesquisa'] ?? '');
-
 
 // Buscar produtos com base na pesquisa (caso haja)
 $sql = "SELECT id, nome, caminho_imagem FROM produtos";
@@ -53,7 +51,7 @@ $produtos = $stmt->fetchAll();
     </style>
 </head>
 <body>
-    <div class="container mt-5 pt-5">
+    <div class="container mt-4 pt-5">
         <h2>Bem-vindo ao Sistema de Gestão 3D</h2>
         <p>Escolha uma opção no menu acima para gerenciar estúdios ou peças.</p>
 
@@ -64,6 +62,10 @@ $produtos = $stmt->fetchAll();
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Buscar produto" name="pesquisa" id="campo_pesquisa" value="<?= htmlspecialchars($pesquisa) ?>" autocomplete="off" list="sugestoes-list">
                 <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+                <!-- Botão para limpar a busca -->
+                <?php if (!empty($pesquisa)): ?>
+                    <a href="index.php" class="btn btn-outline-danger">Limpar</a>
+                <?php endif; ?>
             </div>
             <datalist id="sugestoes-list">
                 <?php foreach ($produtos as $produto): ?>
