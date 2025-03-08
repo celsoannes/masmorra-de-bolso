@@ -12,7 +12,12 @@ if (!isset($_SESSION['usuario_id'])) {
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 // Buscar os detalhes do produto
-$stmt = $pdo->prepare("SELECT * FROM produtos WHERE id = ?");
+$stmt = $pdo->prepare("
+    SELECT p.*, c.nome AS categoria_nome 
+    FROM produtos p
+    LEFT JOIN categorias c ON p.categoria_id = c.id
+    WHERE p.id = ?
+");
 $stmt->execute([$id]);
 $produto = $stmt->fetch();
 
@@ -166,6 +171,34 @@ function calcularCustoProducao($peca) {
         <img src="<?= htmlspecialchars($produto['caminho_imagem']) ?>" alt="Imagem do Produto" class="img-fluid mb-3" style="max-width: 300px;">
         
         <ul class="list-group">
+            <!-- Exibir a categoria do produto -->
+            <li class="list-group-item">
+                <strong>Categoria:</strong> <?= htmlspecialchars($produto['categoria_nome'] ?? 'Nenhuma categoria definida') ?>
+            </li>
+
+            <!-- Exibir os atributos da peça -->
+            <?php
+            // Buscar atributos da peça (usando a tabela produto_atributos)
+            $stmt_atributos = $pdo->prepare("
+                SELECT ca.nome_atributo, pa.valor 
+                FROM produto_atributos pa
+                JOIN categoria_atributos ca ON pa.atributo_id = ca.id
+                WHERE pa.produto_id = ?
+            ");
+            $stmt_atributos->execute([$produto['id']]); // Usar o ID do produto
+            $atributos = $stmt_atributos->fetchAll(PDO::FETCH_ASSOC);
+
+            if (count($atributos) > 0) {
+                foreach ($atributos as $atributo): 
+                ?>
+                    <li class="list-group-item">
+                        <strong><?= htmlspecialchars($atributo['nome_atributo']) ?>:</strong> <?= htmlspecialchars($atributo['valor']) ?>
+                    </li>
+                <?php endforeach;
+            } else {
+                echo '<li class="list-group-item">Nenhum atributo encontrado.</li>';
+            }
+            ?>
             <li class="list-group-item"><strong>Vídeo:</strong> <a href="<?= htmlspecialchars($produto['video']) ?>" target="_blank">Assistir</a></li>
             <li class="list-group-item"><strong>Download:</strong> <a href="<?= htmlspecialchars($produto['baixar']) ?>" target="_blank">Baixar</a></li>
             <li class="list-group-item"><strong>Observações:</strong> <?= nl2br(htmlspecialchars($produto['observacoes'])) ?></li>
@@ -193,32 +226,6 @@ function calcularCustoProducao($peca) {
                     <small>Localização: <?= htmlspecialchars($peca['localizacao_impressora']) ?></small>
                     <br>
                     <small>Consumo de Energia: <?= number_format($peca['consumo_impressora'], 3, ',', '.') ?> kWh</small>
-                    <br>
-                    <small>Categoria: <?= htmlspecialchars($peca['categoria_nome']) ?></small> <!-- Exibindo a categoria -->
-                    <br>
-                    <small>Atributos:</small>
-                    <ul>
-                        <?php
-                        // Buscar atributos da peça (usando a tabela produto_atributos)
-                        $stmt_atributos = $pdo->prepare("
-                            SELECT ca.nome_atributo, pa.valor 
-                            FROM produto_atributos pa
-                            JOIN categoria_atributos ca ON pa.atributo_id = ca.id
-                            WHERE pa.produto_id = ?
-                        ");
-                        $stmt_atributos->execute([$produto['id']]); // Usar o ID do produto
-                        $atributos = $stmt_atributos->fetchAll(PDO::FETCH_ASSOC);
-
-                        if (count($atributos) > 0) {
-                            foreach ($atributos as $atributo): 
-                            ?>
-                                <li><small><?= htmlspecialchars($atributo['nome_atributo']) ?>:</small> <?= htmlspecialchars($atributo['valor']) ?></li>
-                            <?php endforeach;
-                        } else {
-                            echo "<li>Nenhum atributo encontrado.</li>";
-                        }
-                        ?>
-                    </ul>
                 </li>
             <?php endforeach; ?>
         </ul>
