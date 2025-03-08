@@ -16,6 +16,14 @@ if (!$produto) {
     die("Produto não encontrado.");
 }
 
+// Buscar tags associadas ao produto
+$stmt = $pdo->prepare("SELECT t.id, t.nome 
+                       FROM produto_tags pt 
+                       JOIN tags t ON pt.tag_id = t.id 
+                       WHERE pt.produto_id = ?");
+$stmt->execute([$id]);
+$tags = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 // Buscar categorias para o dropdown
 $stmt = $pdo->query("SELECT * FROM categorias ORDER BY nome ASC");
 $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -55,6 +63,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($_FILES['imagem']['name'])) {
         require __DIR__ . '/upload.php'; // Inclui o script de upload
         // $caminho_imagem será atualizado pelo script de upload
+    }
+
+    // Atualizar tags associadas ao produto
+    $pdo->prepare("DELETE FROM produto_tags WHERE produto_id = ?")->execute([$id]);
+    if (isset($_POST['tags']) && is_array($_POST['tags'])) {
+        foreach ($_POST['tags'] as $tag_nome) {
+            // Verifica se a tag já existe
+            $stmt = $pdo->prepare("SELECT id FROM tags WHERE nome = ?");
+            $stmt->execute([$tag_nome]);
+            $tag = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Se a tag não existir, cria uma nova
+            if (!$tag) {
+                $stmt = $pdo->prepare("INSERT INTO tags (nome) VALUES (?)");
+                $stmt->execute([$tag_nome]);
+                $tag_id = $pdo->lastInsertId();
+            } else {
+                $tag_id = $tag['id'];
+            }
+
+            // Associa a tag ao produto
+            $pdo->prepare("INSERT INTO produto_tags (produto_id, tag_id) VALUES (?, ?)")
+                ->execute([$id, $tag_id]);
+        }
     }
 
     // Atualizar produto no banco de dados
@@ -161,6 +193,21 @@ require __DIR__ . '/../includes/menu.php';
                 }
             }
             ?>
+        </div>
+
+        <!-- Adicionar Tags -->
+        <div class="mb-3">
+            <label>Tags:</label>
+            <input type="text" id="buscarTag" class="form-control" placeholder="Digite uma tag">
+            <div id="tagsSelecionadas" class="mt-2">
+                <?php foreach ($tags as $tag): ?>
+                    <span id="tag_<?= htmlspecialchars($tag['nome']) ?>" class="badge bg-primary me-2">
+                        <?= htmlspecialchars($tag['nome']) ?>
+                        <input type="hidden" name="tags[]" value="<?= htmlspecialchars($tag['nome']) ?>">
+                        <button type="button" class="btn-close btn-close-white ms-2 removerTag" data-nome="<?= htmlspecialchars($tag['nome']) ?>"></button>
+                    </span>
+                <?php endforeach; ?>
+            </div>
         </div>
 
         <div class="mb-3">
@@ -289,7 +336,6 @@ $(document).ready(function() {
 
 <!-- jQuery e jQuery UI para Autocomplete -->
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <script>
@@ -348,6 +394,57 @@ $(document).ready(function() {
     $(document).on("click", ".removerComponente", function() {
         let componenteId = $(this).data("id");
         $("#componente_" + componenteId).remove();
+    });
+
+    // Autocomplete para Tags
+    $("#buscarTag").autocomplete({
+        source: "../controllers/buscar_tags.php",
+        minLength: 2,
+        select: function(event, ui) {
+            let tagNome = ui.item.value;
+
+            // Verifica se a tag já foi adicionada
+            if ($("#tag_" + tagNome).length === 0) {
+                $("#tagsSelecionadas").append(`
+                    <span id="tag_${tagNome}" class="badge bg-primary me-2">
+                        ${tagNome}
+                        <input type="hidden" name="tags[]" value="${tagNome}">
+                        <button type="button" class="btn-close btn-close-white ms-2 removerTag" data-nome="${tagNome}"></button>
+                    </span>
+                `);
+            }
+            $("#buscarTag").val('');
+            return false;
+        }
+    });
+
+    // Adicionar tag ao pressionar Enter
+    $("#buscarTag").on("keydown", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Impede o envio do formulário
+
+            let tagNome = $(this).val().trim(); // Pega o valor do campo
+
+            if (tagNome) {
+                // Verifica se a tag já foi adicionada
+                if ($("#tag_" + tagNome).length === 0) {
+                    $("#tagsSelecionadas").append(`
+                        <span id="tag_${tagNome}" class="badge bg-primary me-2">
+                            ${tagNome}
+                            <input type="hidden" name="tags[]" value="${tagNome}">
+                            <button type="button" class="btn-close btn-close-white ms-2 removerTag" data-nome="${tagNome}"></button>
+                        </span>
+                    `);
+                }
+                $(this).val(''); // Limpa o campo
+            }
+        }
+    });
+
+    // Remover tag
+    $(document).on("click", ".removerTag", function() {
+        let tagNome = $(this).data("nome");
+        $("#tag_" + tagNome).remove();
     });
 });
 </script>

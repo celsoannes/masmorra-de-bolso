@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Tempo de geração: 07/03/2025 às 00:31
+-- Tempo de geração: 08/03/2025 às 03:51
 -- Versão do servidor: 10.11.6-MariaDB-0+deb12u1
 -- Versão do PHP: 8.2.26
 
@@ -265,8 +265,8 @@ CREATE TABLE `pecas` (
 
 INSERT INTO `pecas` (`id`, `nome`, `estudio_id`, `nome_original`, `nome_arquivo`, `impressora`, `material`, `quantidade_material`, `tempo_impressao`, `created_at`, `imagem`) VALUES
 (24, 'Torre de Dados Toca do Hobbit Faminto com Tigela de Petiscos', 2, 'Hungry Halfling Snack Bowl Dice Tower', 'Hungry Halfling Snack Bowl Dice Tower v1.7.3mf', '1', 'Duo Color e Dourado', 358.00, '19:59:00', '2025-03-03 16:40:10', '../uploads/pecas/67c5db6a65ef6.png'),
-(26, 'Bandeja Organizadora de Dados', 2, 'Snackbowl Divider', 'snack bowl dice divider v1.2.stl', '1', 'Rainbow Multicolor', 64.00, '01:58:00', '2025-03-03 17:09:40', '../uploads/pecas/67c5e254347a5.png'),
-(27, 'Berdolock', 8, 'Berdolock', 'Berdolock - Miniaturas para FtQ.stl', '2', 'Semi-Flexível (70/30)', 7.00, '02:12:00', '2025-03-03 20:23:42', '../uploads/pecas/67c60fce69403.png');
+(27, 'Berdolock', 8, 'Berdolock', 'Berdolock - Miniaturas para FtQ.stl', '2', 'Semi-Flexível (70/30)', 7.00, '02:12:00', '2025-03-03 20:23:42', '../uploads/pecas/67c60fce69403.png'),
+(29, 'Bandeja Organizadora de Dados', 2, 'Snackbowl Divider', 'snack bowl dice divider v1.2.stl', '1', 'Rainbow Multicolor', 64.00, '01:58:00', '2025-03-08 01:06:57', '../uploads/pecas/67cb9831c314d.png');
 
 -- --------------------------------------------------------
 
@@ -290,8 +290,8 @@ CREATE TABLE `produtos` (
 --
 
 INSERT INTO `produtos` (`id`, `nome`, `caminho_imagem`, `video`, `baixar`, `observacoes`, `lucro`, `categoria_id`) VALUES
-(21, 'Torre de Dados Toca do Hobbit Faminto com Tigela de Petiscos', '../uploads/imagens/5305cf8dd7955fab9b292142d3184b35.png', 'https://www.youtube.com/', 'https://www.youtube.com/', 'https://www.youtube.com/', 200.00, 2),
-(23, 'teste', '', '', '', '', 150.00, 6);
+(28, 'Torre de Dados Toca do Hobbit Faminto com Tigela de Petiscos', '../uploads/imagens/17cced63cde69fac1771d1d669d5d05e.png', 'http://192.168.0.220/controllers/adicionar_produto.php', 'http://192.168.0.220/controllers/adicionar_produto.php', 'http://192.168.0.220/controllers/adicionar_produto.php', 200.00, 2),
+(38, 'Teste', '../uploads/imagens/c06ea22dc3a52127b28a9eeae82173ae.png', 'http://192.168.0.220/controllers/adicionar_produto.php', 'http://192.168.0.220/controllers/adicionar_produto.php', 'http://192.168.0.220/controllers/adicionar_produto.php', 150.00, 6);
 
 -- --------------------------------------------------------
 
@@ -311,7 +311,7 @@ CREATE TABLE `produtos_componentes` (
 --
 
 INSERT INTO `produtos_componentes` (`id`, `produto_id`, `componente_id`, `quantidade`) VALUES
-(20, 21, 7, 1);
+(24, 28, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -331,8 +331,9 @@ CREATE TABLE `produtos_pecas` (
 --
 
 INSERT INTO `produtos_pecas` (`id`, `produto_id`, `peca_id`, `quantidade`) VALUES
-(42, 21, 24, 1),
-(44, 23, 24, 1);
+(50, 28, 24, 1),
+(51, 28, 29, 1),
+(60, 38, 24, 1);
 
 -- --------------------------------------------------------
 
@@ -352,18 +353,28 @@ CREATE TABLE `produto_atributos` (
 --
 
 INSERT INTO `produto_atributos` (`id`, `produto_id`, `atributo_id`, `valor`) VALUES
-(21, 21, 12, 'Senhor dos Anéis'),
-(22, 21, 13, 'Fantasia'),
-(23, 21, 14, 'Não pintado'),
-(24, 21, 31, '20'),
-(33, 23, 4, 'Humanoide'),
-(34, 23, 5, 'Guerreiro'),
-(35, 23, 6, 'Masculino'),
-(36, 23, 7, 'Pathfinder'),
-(37, 23, 8, 'Pintado'),
-(38, 23, 9, 'Humanoide'),
-(39, 23, 10, 'Personagem jogador (PJ)'),
-(40, 23, 27, 'Humanoide');
+(135, 38, 20, 'Suporte para celular'),
+(136, 38, 21, 'Pintado'),
+(137, 38, 32, 'as');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `produto_tags`
+--
+
+CREATE TABLE `produto_tags` (
+  `produto_id` int(11) NOT NULL,
+  `tag_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `produto_tags`
+--
+
+INSERT INTO `produto_tags` (`produto_id`, `tag_id`) VALUES
+(38, 1),
+(38, 2);
 
 -- --------------------------------------------------------
 
@@ -416,6 +427,25 @@ INSERT INTO `tabela_energia` (`id`, `Prestadora`, `kWh`, `ICMS`, `PIS_PASEP`, `C
 -- --------------------------------------------------------
 
 --
+-- Estrutura para tabela `tags`
+--
+
+CREATE TABLE `tags` (
+  `id` int(11) NOT NULL,
+  `nome` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `tags`
+--
+
+INSERT INTO `tags` (`id`, `nome`) VALUES
+(2, 'Goku'),
+(1, 'RPG');
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura para tabela `usuarios`
 --
 
@@ -433,7 +463,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nome`, `email`, `senha_hash`, `ultimo_acesso`, `created_at`) VALUES
-(1, 'Mago Supremo', 'celsoannes@gmail.com', '$2y$10$8I2jv4zRgK7Bs8ji26zYRufxSuWbadOEiD9ST/hAgij5brbeEXteW', '2025-03-07 00:12:18', '2025-03-02 05:19:43');
+(1, 'Mago Supremo', 'celsoannes@gmail.com', '$2y$10$8I2jv4zRgK7Bs8ji26zYRufxSuWbadOEiD9ST/hAgij5brbeEXteW', '2025-03-08 02:23:41', '2025-03-02 05:19:43');
 
 --
 -- Índices para tabelas despejadas
@@ -532,6 +562,13 @@ ALTER TABLE `produto_atributos`
   ADD KEY `atributo_id` (`atributo_id`);
 
 --
+-- Índices de tabela `produto_tags`
+--
+ALTER TABLE `produto_tags`
+  ADD PRIMARY KEY (`produto_id`,`tag_id`),
+  ADD KEY `tag_id` (`tag_id`);
+
+--
 -- Índices de tabela `resinas`
 --
 ALTER TABLE `resinas`
@@ -542,6 +579,13 @@ ALTER TABLE `resinas`
 --
 ALTER TABLE `tabela_energia`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `tags`
+--
+ALTER TABLE `tags`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `nome` (`nome`);
 
 --
 -- Índices de tabela `usuarios`
@@ -558,91 +602,97 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de tabela `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de tabela `categoria_atributos`
 --
 ALTER TABLE `categoria_atributos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de tabela `componentes`
 --
 ALTER TABLE `componentes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de tabela `estacoes_lavagem`
 --
 ALTER TABLE `estacoes_lavagem`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de tabela `estudios`
 --
 ALTER TABLE `estudios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de tabela `filamentos`
 --
 ALTER TABLE `filamentos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de tabela `impressoras`
 --
 ALTER TABLE `impressoras`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de tabela `lavagem`
 --
 ALTER TABLE `lavagem`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de tabela `pecas`
 --
 ALTER TABLE `pecas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de tabela `produtos`
 --
 ALTER TABLE `produtos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT de tabela `produtos_componentes`
 --
 ALTER TABLE `produtos_componentes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de tabela `produtos_pecas`
 --
 ALTER TABLE `produtos_pecas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT de tabela `produto_atributos`
 --
 ALTER TABLE `produto_atributos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=138;
 
 --
 -- AUTO_INCREMENT de tabela `resinas`
 --
 ALTER TABLE `resinas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de tabela `tabela_energia`
 --
 ALTER TABLE `tabela_energia`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de tabela `tags`
+--
+ALTER TABLE `tags`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de tabela `usuarios`
@@ -698,6 +748,13 @@ ALTER TABLE `produtos_pecas`
 ALTER TABLE `produto_atributos`
   ADD CONSTRAINT `produto_atributos_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `produto_atributos_ibfk_2` FOREIGN KEY (`atributo_id`) REFERENCES `categoria_atributos` (`id`) ON DELETE CASCADE;
+
+--
+-- Restrições para tabelas `produto_tags`
+--
+ALTER TABLE `produto_tags`
+  ADD CONSTRAINT `produto_tags_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `produto_tags_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
