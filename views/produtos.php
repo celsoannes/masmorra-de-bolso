@@ -7,24 +7,25 @@ require __DIR__ . '/../includes/menu.php';
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 
 // Consulta SQL com filtro de busca
-$sql = "SELECT p.*, c.nome AS categoria_nome 
+$sql = "SELECT p.*, c.nome AS categoria_nome, GROUP_CONCAT(t.nome SEPARATOR ', ') AS tags 
         FROM produtos p 
         LEFT JOIN categorias c ON p.categoria_id = c.id 
-        LEFT JOIN produto_atributos pa ON p.id = pa.produto_id 
+        LEFT JOIN produto_tags pt ON p.id = pt.produto_id 
+        LEFT JOIN tags t ON pt.tag_id = t.id 
         WHERE p.nome LIKE :search_nome 
            OR c.nome LIKE :search_categoria 
-           OR pa.valor LIKE :search_atributo 
-        GROUP BY p.id"; // Agrupa para evitar duplicatas
+           OR t.nome LIKE :search_tag 
+        GROUP BY p.id";
 $stmt = $pdo->prepare($sql);
 
 // Passando os parâmetros corretamente
 $stmt->execute([
     'search_nome' => "%$search%",
     'search_categoria' => "%$search%",
-    'search_atributo' => "%$search%"
+    'search_tag' => "%$search%" // Corrigi o nome do parâmetro aqui
 ]);
-
 $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// var_dump($produtos); // Verifique os dados retornados
 ?>
 
 <!DOCTYPE html>
@@ -58,6 +59,7 @@ $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <th>Imagem</th>
                     <th>Nome</th>
                     <th>Categoria</th>
+                    <th>Tags</th> <!-- Coluna para as tags -->
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -67,9 +69,9 @@ $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><img src="<?= htmlspecialchars($produto['caminho_imagem']) ?>" class="img-thumbnail" width="80"></td>
                     <td><?= htmlspecialchars($produto['nome']) ?></td>
                     <td><?= htmlspecialchars($produto['categoria_nome']) ?></td>
+                    <td><?= htmlspecialchars($produto['tags'] ?? 'Sem tags') ?></td> <!-- Exibe as tags -->
                     <td>
                         <a href="../controllers/editar_produto.php?id=<?= $produto['id'] ?>" class="btn btn-warning btn-sm">Editar</a>
-                        <!-- Botão para abrir o modal de confirmação -->
                         <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmarExclusaoModal" data-bs-id="<?= $produto['id'] ?>">
                             Excluir
                         </button>
