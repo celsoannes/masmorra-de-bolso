@@ -32,7 +32,8 @@ $stmt_pecas = $pdo->prepare("
            el.Marca AS marca_estacao, el.Modelo AS modelo_estacao, el.kWh AS consumo_estacao,
            el.tempo_lavagem, el.tempo_cura, el.Valor_do_Bem AS valor_estacao, el.Tempo_de_Vida_Util AS vida_util_estacao,
            l.Valor_Litro AS valor_lavagem, l.Fator_Consumo AS fator_consumo_lavagem,
-           pp.quantidade AS quantidade_peca -- Adicionando a quantidade de peças
+           pp.quantidade AS quantidade_peca,
+           c.nome AS categoria_nome -- Adicionando a categoria da peça
     FROM pecas p
     JOIN impressoras i ON p.impressora = i.ID
     JOIN produtos_pecas pp ON p.id = pp.peca_id
@@ -40,6 +41,7 @@ $stmt_pecas = $pdo->prepare("
     JOIN produtos pr ON pp.produto_id = pr.id
     LEFT JOIN estacoes_lavagem el ON 1=1 -- Assumindo que há apenas uma estação de lavagem
     LEFT JOIN lavagem l ON el.lavagem_id = l.id
+    LEFT JOIN categorias c ON pr.categoria_id = c.id -- Join para buscar a categoria
     WHERE pp.produto_id = ?
 ");
 $stmt_pecas->execute([$id]);
@@ -191,6 +193,32 @@ function calcularCustoProducao($peca) {
                     <small>Localização: <?= htmlspecialchars($peca['localizacao_impressora']) ?></small>
                     <br>
                     <small>Consumo de Energia: <?= number_format($peca['consumo_impressora'], 3, ',', '.') ?> kWh</small>
+                    <br>
+                    <small>Categoria: <?= htmlspecialchars($peca['categoria_nome']) ?></small> <!-- Exibindo a categoria -->
+                    <br>
+                    <small>Atributos:</small>
+                    <ul>
+                        <?php
+                        // Buscar atributos da peça (usando a tabela produto_atributos)
+                        $stmt_atributos = $pdo->prepare("
+                            SELECT ca.nome_atributo, pa.valor 
+                            FROM produto_atributos pa
+                            JOIN categoria_atributos ca ON pa.atributo_id = ca.id
+                            WHERE pa.produto_id = ?
+                        ");
+                        $stmt_atributos->execute([$produto['id']]); // Usar o ID do produto
+                        $atributos = $stmt_atributos->fetchAll(PDO::FETCH_ASSOC);
+
+                        if (count($atributos) > 0) {
+                            foreach ($atributos as $atributo): 
+                            ?>
+                                <li><small><?= htmlspecialchars($atributo['nome_atributo']) ?>:</small> <?= htmlspecialchars($atributo['valor']) ?></li>
+                            <?php endforeach;
+                        } else {
+                            echo "<li>Nenhum atributo encontrado.</li>";
+                        }
+                        ?>
+                    </ul>
                 </li>
             <?php endforeach; ?>
         </ul>
