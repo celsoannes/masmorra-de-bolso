@@ -2,28 +2,48 @@
 session_start();
 require __DIR__ . '/../config/config.php';
 
+// Habilita a exibição de erros
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: login.php");
     exit;
 }
 
-// Não precisamos de pesquisa no carregamento da página, apenas no AJAX
 $pesquisa = trim($_GET['pesquisa'] ?? '');
 
 // Buscar produtos com base na pesquisa (caso haja)
-$sql = "SELECT id, nome, caminho_imagem FROM produtos";
+$sql = "
+    SELECT DISTINCT p.id, p.nome, p.caminho_imagem 
+    FROM produtos p
+    LEFT JOIN produto_tags pt ON p.id = pt.produto_id
+    LEFT JOIN tags t ON pt.tag_id = t.id
+    WHERE 1=1
+";
+
 if ($pesquisa) {
-    $sql .= " WHERE nome LIKE :pesquisa";
+    $sql .= " AND (p.nome LIKE :pesquisa1 OR t.nome LIKE :pesquisa2)";
 }
 
 $stmt = $pdo->prepare($sql);
 
 if ($pesquisa) {
-    $stmt->bindValue(':pesquisa', '%' . $pesquisa . '%');
+    $stmt->bindValue(':pesquisa1', '%' . $pesquisa . '%', PDO::PARAM_STR);
+    $stmt->bindValue(':pesquisa2', '%' . $pesquisa . '%', PDO::PARAM_STR);
 }
 
-$stmt->execute();
-$produtos = $stmt->fetchAll();
+try {
+    $stmt->execute();
+    $produtos = $stmt->fetchAll();
+} catch (PDOException $e) {
+    die("Erro ao executar a consulta: " . $e->getMessage());
+}
+
+// Buscar todas as tags para o datalist
+$stmt_tags = $pdo->query("SELECT nome FROM tags");
+$tags = $stmt_tags->fetchAll(PDO::FETCH_ASSOC);
 
 // Inclui o menu apenas após garantir que não há redirecionamento
 require __DIR__ . '/../includes/menu.php';
@@ -69,9 +89,16 @@ require __DIR__ . '/../includes/menu.php';
                 <?php endif; ?>
             </div>
             <datalist id="sugestoes-list">
-                <?php foreach ($produtos as $produto): ?>
-                    <option value="<?= htmlspecialchars($produto['nome']) ?>"></option>
-                <?php endforeach; ?>
+                <?php if (!empty($produtos)): ?>
+                    <?php foreach ($produtos as $produto): ?>
+                        <option value="<?= htmlspecialchars($produto['nome']) ?>"></option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <?php if (!empty($tags)): ?>
+                    <?php foreach ($tags as $tag): ?>
+                        <option value="<?= htmlspecialchars($tag['nome']) ?>"></option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </datalist>
         </form>
 

@@ -52,6 +52,16 @@ $stmt_pecas = $pdo->prepare("
 $stmt_pecas->execute([$id]);
 $pecas = $stmt_pecas->fetchAll();
 
+// Buscar as tags associadas ao produto
+$stmt_tags = $pdo->prepare("
+    SELECT t.nome 
+    FROM tags t
+    JOIN produto_tags pt ON t.id = pt.tag_id
+    WHERE pt.produto_id = ?
+");
+$stmt_tags->execute([$id]);
+$tags = $stmt_tags->fetchAll(PDO::FETCH_ASSOC);
+
 // Função para calcular o custo de energia da lavagem e cura
 function calcularCustoEnergiaLavagem($consumo_estacao, $tempo_lavagem, $tempo_cura, $kWh_energia, $ICMS, $PIS_PASEP, $COFINS, $TOTAL_horas) {
     // Converter tempo de lavagem e cura para minutos
@@ -166,7 +176,7 @@ function calcularCustoProducao($peca) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container mt-4 pt-5">
         <h2><?= htmlspecialchars($produto['nome']) ?></h2>
         <img src="<?= htmlspecialchars($produto['caminho_imagem']) ?>" alt="Imagem do Produto" class="img-fluid mb-3" style="max-width: 300px;">
         
@@ -199,6 +209,17 @@ function calcularCustoProducao($peca) {
                 echo '<li class="list-group-item">Nenhum atributo encontrado.</li>';
             }
             ?>
+            <!-- Exibir as tags do produto -->
+            <li class="list-group-item">
+                <strong>Tags:</strong>
+                <?php if (count($tags) > 0): ?>
+                    <?php foreach ($tags as $tag): ?>
+                        <span class="badge bg-primary me-2"><?= htmlspecialchars($tag['nome']) ?></span>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <span>Nenhuma tag associada.</span>
+                <?php endif; ?>
+            </li>
             <li class="list-group-item"><strong>Vídeo:</strong> <a href="<?= htmlspecialchars($produto['video']) ?>" target="_blank">Assistir</a></li>
             <li class="list-group-item"><strong>Download:</strong> <a href="<?= htmlspecialchars($produto['baixar']) ?>" target="_blank">Baixar</a></li>
             <li class="list-group-item"><strong>Observações:</strong> <?= nl2br(htmlspecialchars($produto['observacoes'])) ?></li>
