@@ -20,12 +20,10 @@ if (!empty($_FILES['imagem']['name'])) {
         die("Erro: O arquivo não é uma imagem válida.");
     }
 
-    // Obtém as dimensões da imagem
-    list($largura, $altura) = getimagesize($arquivo_temp);
-
-    // Verifica se a imagem tem exatamente 512x512 pixels
-    if ($largura != 512 || $altura != 512) {
-        die("Erro: A imagem deve ter exatamente 512x512 pixels. Enviada: {$largura}x{$altura}");
+    // Verifica o tamanho máximo do arquivo (2MB)
+    $max_size = 2 * 1024 * 1024; // 2MB em bytes
+    if ($_FILES['imagem']['size'] > $max_size) {
+        die("Erro: O arquivo deve ter no máximo 2MB.");
     }
 
     // Gera um nome de arquivo único usando hash
