@@ -347,10 +347,14 @@ $(document).ready(function() {
         select: function(event, ui) {
             let pecaId = ui.item.id;
             let pecaNome = ui.item.value;
+            let pecaImagem = ui.item.imagem; // URL da imagem
 
             if ($("#peca_" + pecaId).length === 0) {
                 $("#tabelaPecas").append(`
                     <tr id="peca_${pecaId}">
+                        <td>
+                            ${pecaImagem ? `<img src="${pecaImagem}" alt="Imagem da peça" class="img-thumbnail" style="max-width: 50px;">` : 'Sem imagem'}
+                        </td>
                         <td>${pecaNome}</td>
                         <td><input type="number" name="pecas[${pecaId}]" value="1" min="1" class="form-control"></td>
                         <td><button type="button" class="btn btn-danger removerPeca" data-id="${pecaId}">Remover</button></td>
