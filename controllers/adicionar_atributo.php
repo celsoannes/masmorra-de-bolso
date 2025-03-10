@@ -54,9 +54,61 @@ require __DIR__ . '/../includes/menu.php';
         </div>
         <div class="mb-3">
             <label class="form-label">Opções (apenas para tipo "Seleção")</label>
-            <textarea name="opcoes" class="form-control" rows="3"></textarea>
+            <input type="text" id="campoOpcoes" class="form-control" placeholder="Digite uma opção e pressione Enter">
+            <div id="opcoesSelecionadas" class="mt-2"></div>
+            <input type="hidden" name="opcoes" id="opcoesHidden">
         </div>
         <button type="submit" class="btn btn-success mt-3">Salvar</button>
         <a href="../views/atributos.php" class="btn btn-secondary mt-3">Voltar</a>
     </form>
 </div>
+
+<!-- jQuery (necessário para o autocomplete e manipulação do DOM) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    const campoOpcoes = $("#campoOpcoes");
+    const opcoesSelecionadas = $("#opcoesSelecionadas");
+    const opcoesHidden = $("#opcoesHidden");
+
+    // Função para atualizar o campo hidden com as opções selecionadas
+    function atualizarOpcoesHidden() {
+        const opcoes = [];
+        opcoesSelecionadas.find(".badge").each(function() {
+            opcoes.push($(this).text().trim());
+        });
+        opcoesHidden.val(opcoes.join(","));
+    }
+
+    // Adicionar opção ao pressionar Enter
+    campoOpcoes.on("keydown", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Impede o envio do formulário
+
+            const opcao = campoOpcoes.val().trim();
+
+            if (opcao) {
+                // Verifica se a opção já foi adicionada
+                if ($("#opcao_" + opcao).length === 0) {
+                    opcoesSelecionadas.append(`
+                        <span id="opcao_${opcao}" class="badge bg-primary me-2 mb-2">
+                            ${opcao}
+                            <button type="button" class="btn-close btn-close-white ms-2 removerOpcao" data-opcao="${opcao}"></button>
+                        </span>
+                    `);
+                    campoOpcoes.val(""); // Limpa o campo
+                    atualizarOpcoesHidden(); // Atualiza o campo hidden
+                }
+            }
+        }
+    });
+
+    // Remover opção ao clicar no "X"
+    opcoesSelecionadas.on("click", ".removerOpcao", function() {
+        const opcao = $(this).data("opcao");
+        $("#opcao_" + opcao).remove();
+        atualizarOpcoesHidden(); // Atualiza o campo hidden
+    });
+});
+</script>
