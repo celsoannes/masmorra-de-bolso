@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $video = trim($_POST['video']);
     $baixar = trim($_POST['baixar']);
     $observacoes = trim($_POST['observacoes']);
-    $lucro = isset($_POST['lucro']) ? floatval($_POST['lucro']) : 150; // Define 150% como padrão
+    $lucro = isset($_POST['lucro']) ? floatval($_POST['lucro']) : 200; // Define 200% como padrão
     $categoria_id = $_POST['categoria_id'];
 
     // Upload de imagem (se houver)
@@ -302,7 +302,7 @@ require __DIR__ . '/../includes/menu.php';
 
         <div class="mb-3">
             <label>Lucro (%):</label>
-            <input type="number" name="lucro" value="<?= htmlspecialchars($produto['lucro'] ?? 150) ?>" class="form-control" min="0" step="0.1">
+            <input type="number" name="lucro" value="<?= htmlspecialchars($produto['lucro'] ?? 200) ?>" class="form-control" min="0" step="0.1">
         </div>
 
         <button type="submit" class="btn btn-primary mt-3">Salvar Alterações</button>

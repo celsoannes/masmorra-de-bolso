@@ -187,7 +187,7 @@ require __DIR__ . '/../includes/menu.php';
 
             <div class="mb-3">
                 <label>Lucro (%):</label>
-                <input type="number" name="lucro" class="form-control" value="150" min="0" step="0.1">
+                <input type="number" name="lucro" class="form-control" value="200" min="0" step="0.1">
             </div>
 
             <button type="submit" class="btn btn-primary mt-3">Adicionar</button>
