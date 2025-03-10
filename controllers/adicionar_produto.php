@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $video = trim($_POST['video']);
     $baixar = trim($_POST['baixar']);
     $observacoes = trim($_POST['observacoes']);
-    $lucro = isset($_POST['lucro']) ? floatval($_POST['lucro']) : 150; // Define 150% como padrão
+    $lucro = isset($_POST['lucro']) ? floatval($_POST['lucro']) : 200; // Define 200% como padrão
     $categoria_id = $_POST['categoria_id'];
 
     // Upload de imagem (se houver)
