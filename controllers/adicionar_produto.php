@@ -209,7 +209,10 @@ require __DIR__ . '/../includes/menu.php';
 
             <div class="mb-3">
                 <label>Imagem do Produto:</label>
-                <input type="file" name="imagem" class="form-control">
+                <input type="file" name="imagem" class="form-control" id="imagemProduto">
+                <div class="mt-3">
+                    <img id="previewImagemProduto" class="img-thumbnail" style="max-width: 200px; display: none;">
+                </div>
             </div>
 
             <!-- Adicionar Imagens Adicionais -->
@@ -371,6 +374,21 @@ require __DIR__ . '/../includes/menu.php';
             let tagNome = $(this).data("nome");
             $("#tag_" + tagNome).remove();
         });
+    });
+    </script>
+
+    <script>
+    document.getElementById('imagemProduto').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('previewImagemProduto');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
     });
     </script>
 </body>
