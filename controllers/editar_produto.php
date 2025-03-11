@@ -49,6 +49,11 @@ $stmt = $pdo->prepare("SELECT c.id, c.nome_material AS nome, pc.quantidade, c.ca
 $stmt->execute([$id]);
 $componentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Buscar imagens adicionais associadas ao produto
+$stmt = $pdo->prepare("SELECT * FROM produto_imagens WHERE produto_id = ?");
+$stmt->execute([$id]);
+$imagens_adicionais = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Coletar dados do formulário
     $nome = trim($_POST['nome']);
@@ -124,6 +129,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (!empty($valor)) {
                 $pdo->prepare("INSERT INTO produto_atributos (produto_id, atributo_id, valor) VALUES (?, ?, ?)")
                     ->execute([$id, $atributo_id, $valor]);
+            }
+        }
+    }
+
+    // Atualizar imagens adicionais associadas ao produto
+    if (!empty($_FILES['imagens_adicionais']['name'][0])) {
+        // Remova esta linha
+    }
+
+    // Atualizar imagens adicionais
+    if (!empty($_FILES['imagens_adicionais']['name'][0])) {
+        foreach ($_FILES['imagens_adicionais']['tmp_name'] as $key => $tmp_name) {
+            $file_name = $_FILES['imagens_adicionais']['name'][$key];
+            $file_tmp = $_FILES['imagens_adicionais']['tmp_name'][$key];
+            $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+            $file_new_name = uniqid() . '.' . $file_ext;
+            $file_path = __DIR__ . '/../uploads/' . $file_new_name;
+
+            if (move_uploaded_file($file_tmp, $file_path)) {
+                // Inserir nova imagem no banco de dados
+                $stmt = $pdo->prepare("INSERT INTO produto_imagens (produto_id, caminho_imagem) VALUES (?, ?)");
+                $stmt->execute([$id, $file_new_name]);
+            }
+        }
+    }
+
+    // Excluir imagens adicionais
+    if (isset($_POST['imagens_excluir']) && is_array($_POST['imagens_excluir'])) {
+        foreach ($_POST['imagens_excluir'] as $imagem_id) {
+            // Buscar caminho da imagem para excluir o arquivo
+            $stmt = $pdo->prepare("SELECT caminho_imagem FROM produto_imagens WHERE id = ?");
+            $stmt->execute([$imagem_id]);
+            $imagem = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($imagem) {
+                // Excluir arquivo de imagem
+                $file_path = __DIR__ . '/../uploads/' . $imagem['caminho_imagem'];
+                if (file_exists($file_path)) {
+                    unlink($file_path);
+                }
+
+                // Excluir registro do banco de dados
+                $stmt = $pdo->prepare("DELETE FROM produto_imagens WHERE id = ?");
+                $stmt->execute([$imagem_id]);
             }
         }
     }
@@ -300,6 +349,29 @@ require __DIR__ . '/../includes/menu.php';
             <input type="file" name="imagem" class="form-control">
         </div>
 
+        <!-- Adicionar Imagens Adicionais -->
+        <div class="mb-3">
+            <label>Imagens Adicionais (até 4):</label>
+            <input type="file" name="imagens_adicionais[]" class="form-control" multiple accept="image/*">
+        </div>
+
+        <!-- Listar Imagens Adicionais Existentes -->
+        <div class="mb-3">
+            <label>Imagens Adicionais Existentes:</label>
+            <div class="row">
+                <?php foreach ($imagens_adicionais as $imagem): ?>
+                    <div class="col-md-3">
+                        <div class="card mb-3">
+                            <img src="/uploads/<?= htmlspecialchars($imagem['caminho_imagem']) ?>" class="card-img-top" alt="Imagem adicional">
+                            <div class="card-body">
+                                <button type="button" class="btn btn-danger btn-sm removerImagem" data-id="<?= $imagem['id'] ?>">Excluir</button>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
         <div class="mb-3">
             <label>Lucro (%):</label>
             <input type="number" name="lucro" value="<?= htmlspecialchars($produto['lucro'] ?? 200) ?>" class="form-control" min="0" step="0.1">
@@ -449,6 +521,21 @@ $(document).ready(function() {
     $(document).on("click", ".removerTag", function() {
         let tagNome = $(this).data("nome");
         $("#tag_" + tagNome).remove();
+    });
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    // Remover imagem adicional
+    $(document).on("click", ".removerImagem", function() {
+        let imagemId = $(this).data("id");
+        $(this).closest('.col-md-3').remove();
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'imagens_excluir[]',
+            value: imagemId
+        }).appendTo('form');
     });
 });
 </script>

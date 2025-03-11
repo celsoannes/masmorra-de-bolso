@@ -6,14 +6,11 @@ if (!is_dir($upload_dir)) {
     mkdir($upload_dir, 0777, true);
 }
 
+$caminho_imagem = '';
+
 if (!empty($_FILES['imagem']['name'])) {
     $arquivo_temp = $_FILES['imagem']['tmp_name'];
     $extensao = strtolower(pathinfo($_FILES['imagem']['name'], PATHINFO_EXTENSION));
-
-    // Verifica se o arquivo é um PNG
-    if ($extensao !== 'png') {
-        die("Erro: Apenas imagens PNG são permitidas.");
-    }
 
     // Verifica se o arquivo é uma imagem válida
     if (!getimagesize($arquivo_temp)) {
@@ -28,7 +25,7 @@ if (!empty($_FILES['imagem']['name'])) {
 
     // Gera um nome de arquivo único usando hash
     $hash = md5(uniqid(rand(), true));
-    $novo_nome = $hash . ".png";
+    $novo_nome = $hash . "." . $extensao;
     $caminho_imagem = $upload_dir . $novo_nome;
 
     // Move o arquivo para o diretório de uploads
@@ -40,7 +37,5 @@ if (!empty($_FILES['imagem']['name'])) {
     if (!file_exists($caminho_imagem)) {
         die("Erro: O arquivo não foi salvo corretamente.");
     }
-} else {
-    $caminho_imagem = $componente['caminho_imagem'] ?? '';
 }
 ?>

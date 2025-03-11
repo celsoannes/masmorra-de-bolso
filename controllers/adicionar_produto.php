@@ -2,6 +2,11 @@
 session_start();
 require __DIR__ . '/../config/config.php';
 
+// Ativar exibição de erros
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Verifica se o usuário está logado
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: ../views/login.php");
@@ -17,13 +22,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $lucro = isset($_POST['lucro']) ? floatval($_POST['lucro']) : 200; // Define 200% como padrão
     $categoria_id = $_POST['categoria_id'];
 
-    // Upload de imagem (se houver)
+    // Upload de imagem principal (se houver)
     require 'upload.php';
 
     // Inserir produto no banco de dados
     $stmt = $pdo->prepare("INSERT INTO produtos (nome, caminho_imagem, video, baixar, observacoes, lucro, categoria_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
     if ($stmt->execute([$nome, $caminho_imagem, $video, $baixar, $observacoes, $lucro, $categoria_id])) {
         $produto_id = $pdo->lastInsertId();
+
+        // Upload de imagens adicionais (se houver)
+        if (!empty($_FILES['imagens_adicionais']['name'][0])) {
+            $imagens_adicionais = [];
+            foreach ($_FILES['imagens_adicionais']['tmp_name'] as $key => $tmp_name) {
+                $file_name = $_FILES['imagens_adicionais']['name'][$key];
+                $file_tmp = $_FILES['imagens_adicionais']['tmp_name'][$key];
+                $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+                $file_new_name = uniqid() . '.' . $file_ext;
+                $file_path = __DIR__ . '/../uploads/' . $file_new_name;
+
+                if (move_uploaded_file($file_tmp, $file_path)) {
+                    $imagens_adicionais[] = $file_new_name;
+                }
+            }
+
+            // Salvar caminhos das imagens adicionais no banco de dados
+            foreach ($imagens_adicionais as $imagem_adicional) {
+                $stmt = $pdo->prepare("INSERT INTO produto_imagens (produto_id, caminho_imagem) VALUES (?, ?)");
+                $stmt->execute([$produto_id, $imagem_adicional]);
+            }
+        }
 
         // Adicionar tags ao produto
         if (isset($_POST['tags']) && is_array($_POST['tags'])) {
@@ -183,6 +210,12 @@ require __DIR__ . '/../includes/menu.php';
             <div class="mb-3">
                 <label>Imagem do Produto:</label>
                 <input type="file" name="imagem" class="form-control">
+            </div>
+
+            <!-- Adicionar Imagens Adicionais -->
+            <div class="mb-3">
+                <label>Imagens Adicionais (até 4):</label>
+                <input type="file" name="imagens_adicionais[]" class="form-control" multiple accept="image/*">
             </div>
 
             <div class="mb-3">
