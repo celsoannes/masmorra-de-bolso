@@ -128,6 +128,39 @@ require __DIR__ . '/../includes/menu.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adicionar Produto</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+    .img-thumbnail {
+        max-width: 100px;
+        max-height: 100px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+
+    .position-relative {
+        position: relative;
+        display: inline-block;
+    }
+
+    .btn-close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: red;
+        color: white;
+        border: none;
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        line-height: 1;
+        padding: 0;
+        border-radius: 50%;
+    }
+    </style>
 </head>
 <body>
     <div class="container mt-5 pt-5">
@@ -218,7 +251,8 @@ require __DIR__ . '/../includes/menu.php';
             <!-- Adicionar Imagens Adicionais -->
             <div class="mb-3">
                 <label>Imagens Adicionais (até 4):</label>
-                <input type="file" name="imagens_adicionais[]" class="form-control" multiple accept="image/*">
+                <input type="file" name="imagens_adicionais[]" class="form-control" multiple accept="image/*" id="imagensAdicionais">
+                <div id="previewImagensAdicionais" class="d-flex flex-wrap mt-3"></div>
             </div>
 
             <div class="mb-3">
@@ -390,6 +424,81 @@ require __DIR__ . '/../includes/menu.php';
             reader.readAsDataURL(file);
         }
     });
+    </script>
+
+    <script>
+    document.getElementById('imagensAdicionais').addEventListener('change', function(event) {
+        const files = event.target.files;
+        const previewContainer = document.getElementById('previewImagensAdicionais');
+        previewContainer.innerHTML = ''; // Limpa as pré-visualizações anteriores
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.classList.add('position-relative', 'me-2', 'mb-2');
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('img-thumbnail');
+                    img.style.maxWidth = '100px';
+                    img.style.maxHeight = '100px';
+
+                    const btnExcluir = document.createElement('button');
+                    btnExcluir.innerHTML = '&times;';
+                    btnExcluir.classList.add('btn-close', 'position-absolute', 'top-0', 'end-0');
+                    btnExcluir.style.backgroundColor = 'red';
+                    btnExcluir.style.padding = '5px';
+                    btnExcluir.style.borderRadius = '50%';
+                    btnExcluir.style.cursor = 'pointer';
+                    btnExcluir.dataset.index = i; // Armazena o índice da imagem
+
+                    // Adiciona evento de clique para remover a imagem
+                    btnExcluir.addEventListener('click', function() {
+                        imgContainer.remove(); // Remove a miniatura
+                        removeImagemDoInput(btnExcluir.dataset.index); // Remove a imagem do input
+                    });
+
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(btnExcluir);
+                    previewContainer.appendChild(imgContainer);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    });
+
+    // Função para remover a imagem do input de arquivo
+    function removeImagemDoInput(index) {
+        const input = document.getElementById('imagensAdicionais');
+        const files = Array.from(input.files);
+
+        // Remove a imagem do array
+        files.splice(index, 1);
+
+        // Cria um novo FileList com os arquivos restantes
+        const newFileList = new DataTransfer();
+        files.forEach(file => newFileList.items.add(file));
+
+        // Atualiza o input de arquivo com as imagens restantes
+        input.files = newFileList.files;
+
+        // Reindexa as miniaturas restantes
+        reindexarMiniaturas();
+    }
+
+    // Função para reindexar as miniaturas restantes
+    function reindexarMiniaturas() {
+        const previewContainer = document.getElementById('previewImagensAdicionais');
+        const miniaturas = previewContainer.querySelectorAll('.position-relative');
+
+        miniaturas.forEach((miniatura, index) => {
+            const btnExcluir = miniatura.querySelector('.btn-close');
+            btnExcluir.dataset.index = index; // Atualiza o índice do botão de exclusão
+        });
+    }
     </script>
 </body>
 </html>
