@@ -358,15 +358,11 @@ require __DIR__ . '/../includes/menu.php';
         <!-- Listar Imagens Adicionais Existentes -->
         <div class="mb-3">
             <label>Imagens Adicionais Existentes:</label>
-            <div class="row">
+            <div class="d-flex flex-wrap">
                 <?php foreach ($imagens_adicionais as $imagem): ?>
-                    <div class="col-md-3">
-                        <div class="card mb-3">
-                            <img src="/uploads/<?= htmlspecialchars($imagem['caminho_imagem']) ?>" class="card-img-top" alt="Imagem adicional">
-                            <div class="card-body">
-                                <button type="button" class="btn btn-danger btn-sm removerImagem" data-id="<?= $imagem['id'] ?>">Excluir</button>
-                            </div>
-                        </div>
+                    <div class="position-relative m-2">
+                        <img src="/uploads/<?= htmlspecialchars($imagem['caminho_imagem']) ?>" class="img-thumbnail" alt="Imagem adicional" style="width: 100px; height: 100px;">
+                        <button type="button" class="btn-close removerImagem" data-id="<?= $imagem['id'] ?>" aria-label="Close"></button>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -530,7 +526,7 @@ $(document).ready(function() {
     // Remover imagem adicional
     $(document).on("click", ".removerImagem", function() {
         let imagemId = $(this).data("id");
-        $(this).closest('.col-md-3').remove();
+        $(this).closest('.position-relative').remove();
         $('<input>').attr({
             type: 'hidden',
             name: 'imagens_excluir[]',
@@ -539,3 +535,27 @@ $(document).ready(function() {
     });
 });
 </script>
+
+<style>
+    .position-relative {
+        position: relative;
+        display: inline-block;
+    }
+    .btn-close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: red;
+        color: white;
+        border: none;
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        line-height: 1;
+        padding: 0;
+    }
+</style>
