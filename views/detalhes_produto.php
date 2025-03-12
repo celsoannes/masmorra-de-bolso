@@ -27,6 +27,11 @@ if (!$produto) {
     exit;
 }
 
+// Buscar as imagens adicionais do produto
+$stmt_imagens = $pdo->prepare("SELECT caminho_imagem FROM produto_imagens WHERE produto_id = ?");
+$stmt_imagens->execute([$id]);
+$imagens_adicionais = $stmt_imagens->fetchAll(PDO::FETCH_ASSOC);
+
 // Buscar as peças associadas ao produto e calcular os custos
 $stmt_pecas = $pdo->prepare("
     SELECT p.id AS peca_id, p.nome AS nome_peca, p.imagem AS imagem_peca, p.material AS material_peca, 
@@ -174,11 +179,68 @@ function calcularCustoProducao($peca) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Produto</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5); /* Cor preta com 50% de opacidade */
+            border-radius: 50%; /* Tornar as setas circulares */
+        }
+
+        .img-produto {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .img-produto:hover::after {
+            content: "Clique para ver em tamanho grande";
+            display: block;
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .highlight-lucro {
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            background-color: #d4edda; /* Verde suave para Lucro */
+            color: #155724; /* Cor mais convidativa */
+        }
+
+        .highlight-venda {
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            background-color: #c3e6cb; /* Verde suave para Valor de Venda */
+            color: #155724; /* Cor mais convidativa */
+        }
+
+        .highlight-custo-total {
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            background-color: #e3f2fd; /* Azul claro suave para Custo Total */
+            color: #0d47a1; /* Azul escuro para contrastar bem */
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-4 pt-5">
         <h2><?= htmlspecialchars($produto['nome']) ?></h2>
-        <img src="<?= htmlspecialchars($produto['caminho_imagem']) ?>" alt="Imagem do Produto" class="img-fluid mb-3" style="max-width: 300px;">
+        <div class="d-flex flex-wrap">
+            <img src="<?= htmlspecialchars($produto['caminho_imagem']) ?>" alt="Imagem do Produto" class="img-fluid img-produto mb-3 me-2" style="max-width: 300px;">
+            <?php foreach ($imagens_adicionais as $imagem): ?>
+                <div class="m-2">
+                    <img src="/uploads/<?= htmlspecialchars($imagem['caminho_imagem']) ?>" alt="Imagem adicional" class="img-thumbnail img-produto" style="width: 100px; height: 100px;">
+                </div>
+            <?php endforeach; ?>
+        </div>
         
         <ul class="list-group">
             <!-- Exibir a categoria do produto -->
@@ -225,6 +287,40 @@ function calcularCustoProducao($peca) {
             <li class="list-group-item"><strong>Observações:</strong> <?= nl2br(htmlspecialchars($produto['observacoes'])) ?></li>
             <li class="list-group-item"><strong>Lucro Estimado:</strong> <?= number_format($produto['lucro'], 0, ',', '.') ?>%</li>
         </ul>
+
+        <!-- Modal -->
+        <div class="modal fade" id="imagemModal" tabindex="-1" aria-labelledby="imagemModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="imagemModalLabel">Imagens do Produto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="carouselImagens" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="<?= htmlspecialchars($produto['caminho_imagem']) ?>" class="d-block w-100" alt="Imagem do Produto">
+                                </div>
+                                <?php foreach ($imagens_adicionais as $index => $imagem): ?>
+                                    <div class="carousel-item">
+                                        <img src="/uploads/<?= htmlspecialchars($imagem['caminho_imagem']) ?>" class="d-block w-100" alt="Imagem adicional">
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselImagens" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselImagens" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <h3 class="mt-4">Detalhes da Peça Associada</h3>
         <ul class="list-group">
@@ -511,5 +607,22 @@ function calcularCustoProducao($peca) {
     <div class="mt-4 text-center">
         <a href="../views/index.php" class="btn btn-secondary mt-3">Voltar</a>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const imagens = document.querySelectorAll('.img-produto');
+            const modal = new bootstrap.Modal(document.getElementById('imagemModal'));
+            const carousel = document.getElementById('carouselImagens');
+            
+            imagens.forEach((imagem, index) => {
+                imagem.addEventListener('click', function() {
+                    const carouselInstance = bootstrap.Carousel.getInstance(carousel);
+                    carouselInstance.to(index); // Ajuste o índice conforme necessário
+                    modal.show();
+                });
+            });
+        });
+    </script>
 </body>
 </html>
