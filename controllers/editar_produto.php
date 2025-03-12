@@ -186,394 +186,213 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 require __DIR__ . '/../includes/menu.php';
 ?>
 
-
-<div class="container mt-5 pt-5">
-    <h2>Editar Produto</h2>
-    <form method="post" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label>Nome do Produto:</label>
-            <input type="text" name="nome" value="<?= htmlspecialchars($produto['nome']) ?>" required class="form-control">
-        </div>
-
-        <div class="mb-3">
-            <label>Categoria:</label>
-            <select name="categoria_id" id="categoria" class="form-control" required>
-                <option value="">Selecione uma categoria</option>
-                <?php foreach ($categorias as $categoria): ?>
-                    <option value="<?= $categoria['id'] ?>" <?= $categoria['id'] == $produto['categoria_id'] ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($categoria['nome']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <!-- Campos de atributos dinâmicos -->
-        <div id="atributos-container">
-            <?php
-            if ($produto['categoria_id']) {
-                // Buscar atributos da categoria selecionada
-                $stmt = $pdo->prepare("SELECT * FROM categoria_atributos WHERE categoria_id = ?");
-                $stmt->execute([$produto['categoria_id']]);
-                $atributos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                foreach ($atributos as $atributo) {
-                    $valor = '';
-                    foreach ($atributos_produto as $atributo_produto) {
-                        if ($atributo_produto['atributo_id'] == $atributo['id']) {
-                            $valor = $atributo_produto['valor'];
-                            break;
-                        }
-                    }
-
-                    echo '<div class="mb-3">';
-                    echo '<label>' . htmlspecialchars($atributo['nome_atributo']) . ':</label>';
-                    if ($atributo['tipo_atributo'] === 'select') {
-                        echo '<select name="atributos[' . $atributo['id'] . ']" class="form-control">';
-                        $opcoes = explode(',', $atributo['opcoes']);
-                        foreach ($opcoes as $opcao) {
-                            $opcao = trim($opcao);
-                            echo '<option value="' . htmlspecialchars($opcao) . '" ' . ($valor == $opcao ? 'selected' : '') . '>' . htmlspecialchars($opcao) . '</option>';
-                        }
-                        echo '</select>';
-                    } else {
-                        echo '<input type="' . $atributo['tipo_atributo'] . '" name="atributos[' . $atributo['id'] . ']" value="' . htmlspecialchars($valor) . '" class="form-control">';
-                    }
-                    echo '</div>';
-                }
-            }
-            ?>
-        </div>
-
-        <!-- Adicionar Tags -->
-        <div class="mb-3">
-            <label>Tags:</label>
-            <input type="text" id="buscarTag" class="form-control" placeholder="Digite uma tag">
-            <div id="tagsSelecionadas" class="mt-2">
-                <?php foreach ($tags as $tag): ?>
-                    <span id="tag_<?= htmlspecialchars($tag['nome']) ?>" class="badge bg-primary me-2">
-                        <?= htmlspecialchars($tag['nome']) ?>
-                        <input type="hidden" name="tags[]" value="<?= htmlspecialchars($tag['nome']) ?>">
-                        <button type="button" class="btn-close btn-close-white ms-2 removerTag" data-nome="<?= htmlspecialchars($tag['nome']) ?>"></button>
-                    </span>
-                <?php endforeach; ?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Produto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet"> <!-- Inclui o CSS do jQuery UI -->
+    <link href="/css/styles.css" rel="stylesheet"> <!-- Inclui o arquivo CSS dedicado -->
+</head>
+<body>
+    <div class="container mt-5 pt-5">
+        <h2>Editar Produto</h2>
+        <form method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label>Nome do Produto:</label>
+                <input type="text" name="nome" value="<?= htmlspecialchars($produto['nome']) ?>" required class="form-control">
             </div>
-        </div>
 
-        <div class="mb-3">
-            <label>Vídeo (YouTube):</label>
-            <input type="url" name="video" value="<?= htmlspecialchars($produto['video']) ?>" class="form-control">
-        </div>
-
-        <div class="mb-3">
-            <label>Link para Download:</label>
-            <input type="url" name="baixar" value="<?= htmlspecialchars($produto['baixar']) ?>" class="form-control">
-        </div>
-
-        <div class="mb-3">
-            <label>Observações:</label>
-            <textarea name="observacoes" class="form-control"><?= htmlspecialchars($produto['observacoes']) ?></textarea>
-        </div>
-
-        
-        <!-- Adicionar Peça -->
-        <div class="mb-3">
-            <label>Adicionar Peça:</label>
-            <input type="text" id="buscarPeca" class="form-control" placeholder="Digite o nome da peça">
-            <table class="table table-striped mt-2">
-                <thead>
-                    <tr>
-                        <th>Imagem</th> <!-- Nova coluna para a imagem -->
-                        <th>Nome da Peça</th>
-                        <th>Quantidade</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody id="tabelaPecas">
-                    <?php foreach ($pecas as $peca): ?>
-                        <tr id="peca_<?= $peca['id'] ?>">
-                            <td>
-                                <?php if (!empty($peca['imagem'])): ?>
-                                    <img src="<?= htmlspecialchars($peca['imagem']) ?>" alt="Imagem da peça" class="img-thumbnail" style="max-width: 50px;">
-                                <?php else: ?>
-                                    <span>Sem imagem</span>
-                                <?php endif; ?>
-                            </td>
-                            <td><?= htmlspecialchars($peca['nome']) ?></td>
-                            <td><input type="number" name="pecas[<?= $peca['id'] ?>]" value="<?= $peca['quantidade'] ?>" min="1" class="form-control"></td>
-                            <td><button type="button" class="btn btn-danger removerPeca" data-id="<?= $peca['id'] ?>">Remover</button></td>
-                        </tr>
+            <div class="mb-3">
+                <label>Categoria:</label>
+                <select name="categoria_id" id="categoria" class="form-control" required>
+                    <option value="">Selecione uma categoria</option>
+                    <?php foreach ($categorias as $categoria): ?>
+                        <option value="<?= $categoria['id'] ?>" <?= $categoria['id'] == $produto['categoria_id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($categoria['nome']) ?>
+                        </option>
                     <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Adicionar Componente -->
-        <div class="mb-3">
-            <label>Adicionar Componente:</label>
-            <input type="text" id="buscarComponente" class="form-control" placeholder="Digite o nome do componente">
-            <table class="table table-striped mt-2">
-                <thead>
-                    <tr>
-                        <th>Imagem</th> <!-- Nova coluna para a imagem -->
-                        <th>Nome do Componente</th>
-                        <th>Quantidade</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody id="tabelaComponentes">
-                    <?php foreach ($componentes as $componente): ?>
-                        <tr id="componente_<?= $componente['id'] ?>">
-                            <td>
-                                <?php if (!empty($componente['caminho_imagem'])): ?>
-                                    <img src="<?= htmlspecialchars($componente['caminho_imagem']) ?>" alt="Imagem do componente" class="img-thumbnail" style="max-width: 50px;">
-                                <?php else: ?>
-                                    <span>Sem imagem</span>
-                                <?php endif; ?>
-                            </td>
-                            <td><?= htmlspecialchars($componente['nome']) ?></td>
-                            <td><input type="number" name="componentes[<?= $componente['id'] ?>]" value="<?= $componente['quantidade'] ?>" min="1" class="form-control"></td>
-                            <td><button type="button" class="btn btn-danger removerComponente" data-id="<?= $componente['id'] ?>">Remover</button></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="mb-3">
-            <label>Imagem do Produto:</label>
-            <?php if ($produto['caminho_imagem']): ?>
-                <div class="mb-3">
-                    <img src="<?= $produto['caminho_imagem'] ?>" alt="Imagem do produto" class="img-thumbnail" style="max-width: 200px;">
-                </div>
-            <?php endif; ?>
-            <input type="file" name="imagem" class="form-control" id="imagemProduto">
-            <div class="mt-3">
-                <img id="previewImagemProduto" class="img-thumbnail" style="max-width: 200px; display: none;">
+                </select>
             </div>
-        </div>
 
-        <!-- Adicionar Imagens Adicionais -->
-        <div class="mb-3">
-            <label>Imagens Adicionais (até 4):</label>
-            <input type="file" name="imagens_adicionais[]" class="form-control" multiple accept="image/*">
-        </div>
+            <!-- Campos de atributos dinâmicos -->
+            <div id="atributos-container">
+                <?php
+                if ($produto['categoria_id']) {
+                    // Buscar atributos da categoria selecionada
+                    $stmt = $pdo->prepare("SELECT * FROM categoria_atributos WHERE categoria_id = ?");
+                    $stmt->execute([$produto['categoria_id']]);
+                    $atributos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        <!-- Listar Imagens Adicionais Existentes -->
-        <div class="mb-3">
-            <label>Imagens Adicionais Existentes:</label>
-            <div class="d-flex flex-wrap">
-                <?php foreach ($imagens_adicionais as $imagem): ?>
-                    <div class="position-relative m-2">
-                        <img src="/uploads/<?= htmlspecialchars($imagem['caminho_imagem']) ?>" class="img-thumbnail" alt="Imagem adicional" style="width: 100px; height: 100px;">
-                        <button type="button" class="btn-close removerImagem" data-id="<?= $imagem['id'] ?>" aria-label="Close"></button>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
+                    foreach ($atributos as $atributo) {
+                        $valor = '';
+                        foreach ($atributos_produto as $atributo_produto) {
+                            if ($atributo_produto['atributo_id'] == $atributo['id']) {
+                                $valor = $atributo_produto['valor'];
+                                break;
+                            }
+                        }
 
-        <div class="mb-3">
-            <label>Lucro (%):</label>
-            <input type="number" name="lucro" value="<?= htmlspecialchars($produto['lucro'] ?? 200) ?>" class="form-control" min="0" step="0.1">
-        </div>
-
-        <button type="submit" class="btn btn-primary mt-3">Salvar Alterações</button>
-        <a href="../views/produtos.php" class="btn btn-secondary mt-3">Voltar</a>
-    </form>
-</div>
-
-<!-- jQuery para carregar atributos dinamicamente -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function() {
-    // Carregar atributos ao selecionar uma categoria
-    $('#categoria').change(function() {
-        let categoria_id = $(this).val();
-        if (categoria_id) {
-            $.ajax({
-                url: '../controllers/buscar_atributos.php',
-                type: 'GET',
-                data: { categoria_id: categoria_id },
-                success: function(response) {
-                    $('#atributos-container').html(response);
+                        echo '<div class="mb-3">';
+                        echo '<label>' . htmlspecialchars($atributo['nome_atributo']) . ':</label>';
+                        if ($atributo['tipo_atributo'] === 'select') {
+                            echo '<select name="atributos[' . $atributo['id'] . ']" class="form-control">';
+                            $opcoes = explode(',', $atributo['opcoes']);
+                            foreach ($opcoes as $opcao) {
+                                $opcao = trim($opcao);
+                                echo '<option value="' . htmlspecialchars($opcao) . '" ' . ($valor == $opcao ? 'selected' : '') . '>' . htmlspecialchars($opcao) . '</option>';
+                            }
+                            echo '</select>';
+                        } else {
+                            echo '<input type="' . $atributo['tipo_atributo'] . '" name="atributos[' . $atributo['id'] . ']" value="' . htmlspecialchars($valor) . '" class="form-control">';
+                        }
+                        echo '</div>';
+                    }
                 }
-            });
-        } else {
-            $('#atributos-container').html('');
-        }
-    });
-});
-</script>
+                ?>
+            </div>
 
-
-<!-- jQuery e jQuery UI para Autocomplete -->
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-<script>
-$(document).ready(function() {
-    // Autocomplete para Peças
-    $("#buscarPeca").autocomplete({
-        source: "../controllers/buscar_pecas.php",
-        minLength: 2,
-        select: function(event, ui) {
-            let pecaId = ui.item.id;
-            let pecaNome = ui.item.value;
-            let pecaImagem = ui.item.imagem; // URL da imagem
-
-            if ($("#peca_" + pecaId).length === 0) {
-                $("#tabelaPecas").append(`
-                    <tr id="peca_${pecaId}">
-                        <td>
-                            ${pecaImagem ? `<img src="${pecaImagem}" alt="Imagem da peça" class="img-thumbnail" style="max-width: 50px;">` : 'Sem imagem'}
-                        </td>
-                        <td>${pecaNome}</td>
-                        <td><input type="number" name="pecas[${pecaId}]" value="1" min="1" class="form-control"></td>
-                        <td><button type="button" class="btn btn-danger removerPeca" data-id="${pecaId}">Remover</button></td>
-                    </tr>
-                `);
-            }
-            $("#buscarPeca").val('');
-            return false;
-        }
-    });
-
-    // Autocomplete para Componentes
-    $("#buscarComponente").autocomplete({
-        source: "../controllers/buscar_componentes.php",
-        minLength: 2,
-        select: function(event, ui) {
-            let componenteId = ui.item.id;
-            let componenteNome = ui.item.value;
-
-            if ($("#componente_" + componenteId).length === 0) {
-                $("#tabelaComponentes").append(`
-                    <tr id="componente_${componenteId}">
-                        <td>${componenteNome}</td>
-                        <td><input type="number" name="componentes[${componenteId}]" value="1" min="1" class="form-control"></td>
-                        <td><button type="button" class="btn btn-danger removerComponente" data-id="${componenteId}">Remover</button></td>
-                    </tr>
-                `);
-            }
-            $("#buscarComponente").val('');
-            return false;
-        }
-    });
-
-    // Remover peça da tabela
-    $(document).on("click", ".removerPeca", function() {
-        let pecaId = $(this).data("id");
-        $("#peca_" + pecaId).remove();
-    });
-
-    // Remover componente da tabela
-    $(document).on("click", ".removerComponente", function() {
-        let componenteId = $(this).data("id");
-        $("#componente_" + componenteId).remove();
-    });
-
-    // Autocomplete para Tags
-    $("#buscarTag").autocomplete({
-        source: "../controllers/buscar_tags.php",
-        minLength: 2,
-        select: function(event, ui) {
-            let tagNome = ui.item.value;
-
-            // Verifica se a tag já foi adicionada
-            if ($("#tag_" + tagNome).length === 0) {
-                $("#tagsSelecionadas").append(`
-                    <span id="tag_${tagNome}" class="badge bg-primary me-2">
-                        ${tagNome}
-                        <input type="hidden" name="tags[]" value="${tagNome}">
-                        <button type="button" class="btn-close btn-close-white ms-2 removerTag" data-nome="${tagNome}"></button>
-                    </span>
-                `);
-            }
-            $("#buscarTag").val('');
-            return false;
-        }
-    });
-
-    // Adicionar tag ao pressionar Enter
-    $("#buscarTag").on("keydown", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault(); // Impede o envio do formulário
-
-            let tagNome = $(this).val().trim(); // Pega o valor do campo
-
-            if (tagNome) {
-                // Verifica se a tag já foi adicionada
-                if ($("#tag_" + tagNome).length === 0) {
-                    $("#tagsSelecionadas").append(`
-                        <span id="tag_${tagNome}" class="badge bg-primary me-2">
-                            ${tagNome}
-                            <input type="hidden" name="tags[]" value="${tagNome}">
-                            <button type="button" class="btn-close btn-close-white ms-2 removerTag" data-nome="${tagNome}"></button>
+            <!-- Adicionar Tags -->
+            <div class="mb-3">
+                <label>Tags:</label>
+                <input type="text" id="buscarTag" class="form-control" placeholder="Digite uma tag">
+                <div id="tagsSelecionadas" class="mt-2">
+                    <?php foreach ($tags as $tag): ?>
+                        <span id="tag_<?= htmlspecialchars($tag['nome']) ?>" class="badge bg-primary me-2">
+                            <?= htmlspecialchars($tag['nome']) ?>
+                            <input type="hidden" name="tags[]" value="<?= htmlspecialchars($tag['nome']) ?>">
+                            <button type="button" class="btn-close btn-close-white ms-2 removerTag" data-nome="<?= htmlspecialchars($tag['nome']) ?>"></button>
                         </span>
-                    `);
-                }
-                $(this).val(''); // Limpa o campo
-            }
-        }
-    });
+                    <?php endforeach; ?>
+                </div>
+            </div>
 
-    // Remover tag
-    $(document).on("click", ".removerTag", function() {
-        let tagNome = $(this).data("nome");
-        $("#tag_" + tagNome).remove();
-    });
-});
-</script>
+            <div class="mb-3">
+                <label>Vídeo (YouTube):</label>
+                <input type="url" name="video" value="<?= htmlspecialchars($produto['video']) ?>" class="form-control">
+            </div>
 
-<script>
-$(document).ready(function() {
-    // Remover imagem adicional
-    $(document).on("click", ".removerImagem", function() {
-        let imagemId = $(this).data("id");
-        $(this).closest('.position-relative').remove();
-        $('<input>').attr({
-            type: 'hidden',
-            name: 'imagens_excluir[]',
-            value: imagemId
-        }).appendTo('form');
-    });
-});
-</script>
+            <div class="mb-3">
+                <label>Link para Download:</label>
+                <input type="url" name="baixar" value="<?= htmlspecialchars($produto['baixar']) ?>" class="form-control">
+            </div>
 
-<style>
-    .position-relative {
-        position: relative;
-        display: inline-block;
-    }
-    .btn-close {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background-color: red;
-        color: white;
-        border: none;
-        cursor: pointer;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        line-height: 1;
-        padding: 0;
-    }
-</style>
+            <div class="mb-3">
+                <label>Observações:</label>
+                <textarea name="observacoes" class="form-control"><?= htmlspecialchars($produto['observacoes']) ?></textarea>
+            </div>
 
-<script>
-document.getElementById('imagemProduto').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.getElementById('previewImagemProduto');
-            preview.src = e.target.result;
-            preview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    }
-});
-</script>
+            <!-- Adicionar Peça -->
+            <div class="mb-3">
+                <label>Adicionar Peça:</label>
+                <input type="text" id="buscarPeca" class="form-control" placeholder="Digite o nome da peça">
+                <table class="table table-striped mt-2">
+                    <thead>
+                        <tr>
+                            <th>Imagem</th> <!-- Nova coluna para a imagem -->
+                            <th>Nome da Peça</th>
+                            <th>Quantidade</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaPecas">
+                        <?php foreach ($pecas as $peca): ?>
+                            <tr id="peca_<?= $peca['id'] ?>">
+                                <td>
+                                    <?php if (!empty($peca['imagem'])): ?>
+                                        <img src="<?= htmlspecialchars($peca['imagem']) ?>" alt="Imagem da peça" class="img-thumbnail" style="max-width: 50px;">
+                                    <?php else: ?>
+                                        <span>Sem imagem</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= htmlspecialchars($peca['nome']) ?></td>
+                                <td><input type="number" name="pecas[<?= $peca['id'] ?>]" value="<?= $peca['quantidade'] ?>" min="1" class="form-control"></td>
+                                <td><button type="button" class="btn btn-danger removerPeca" data-id="<?= $peca['id'] ?>">Remover</button></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Adicionar Componente -->
+            <div class="mb-3">
+                <label>Adicionar Componente:</label>
+                <input type="text" id="buscarComponente" class="form-control" placeholder="Digite o nome do componente">
+                <table class="table table-striped mt-2">
+                    <thead>
+                        <tr>
+                            <th>Imagem</th> <!-- Nova coluna para a imagem -->
+                            <th>Nome do Componente</th>
+                            <th>Quantidade</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaComponentes">
+                        <?php foreach ($componentes as $componente): ?>
+                            <tr id="componente_<?= $componente['id'] ?>">
+                                <td>
+                                    <?php if (!empty($componente['caminho_imagem'])): ?>
+                                        <img src="<?= htmlspecialchars($componente['caminho_imagem']) ?>" alt="Imagem do componente" class="img-thumbnail" style="max-width: 50px;">
+                                    <?php else: ?>
+                                        <span>Sem imagem</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= htmlspecialchars($componente['nome']) ?></td>
+                                <td><input type="number" name="componentes[<?= $componente['id'] ?>]" value="<?= $componente['quantidade'] ?>" min="1" class="form-control"></td>
+                                <td><button type="button" class="btn btn-danger removerComponente" data-id="<?= $componente['id'] ?>">Remover</button></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mb-3">
+                <label>Imagem do Produto:</label>
+                <?php if ($produto['caminho_imagem']): ?>
+                    <div class="mb-3">
+                        <img src="<?= $produto['caminho_imagem'] ?>" alt="Imagem do produto" class="img-thumbnail" style="max-width: 200px;">
+                    </div>
+                <?php endif; ?>
+                <input type="file" name="imagem" class="form-control" id="imagemProduto">
+                <div class="mt-3">
+                    <img id="previewImagemProduto" class="img-thumbnail" style="max-width: 200px; display: none;">
+                </div>
+            </div>
+
+            <!-- Adicionar Imagens Adicionais -->
+            <div class="mb-3">
+                <label>Imagens Adicionais (até 4):</label>
+                <input type="file" name="imagens_adicionais[]" class="form-control" multiple accept="image/*">
+            </div>
+
+            <!-- Listar Imagens Adicionais Existentes -->
+            <div class="mb-3">
+                <label>Imagens Adicionais Existentes:</label>
+                <div class="d-flex flex-wrap">
+                    <?php foreach ($imagens_adicionais as $imagem): ?>
+                        <div class="position-relative m-2">
+                            <img src="/uploads/<?= htmlspecialchars($imagem['caminho_imagem']) ?>" class="img-thumbnail" alt="Imagem adicional" style="width: 100px; height: 100px;">
+                            <button type="button" class="btn-close removerImagem" data-id="<?= $imagem['id'] ?>" aria-label="Close"></button>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label>Lucro (%):</label>
+                <input type="number" name="lucro" value="<?= htmlspecialchars($produto['lucro'] ?? 200) ?>" class="form-control" min="0" step="0.1">
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Salvar Alterações</button>
+            <a href="../views/produtos.php" class="btn btn-secondary mt-3">Voltar</a>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="/js/scripts.js"></script> <!-- Inclui o arquivo JavaScript dedicado -->
+</body>
+</html>

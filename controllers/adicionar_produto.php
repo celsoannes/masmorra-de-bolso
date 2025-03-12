@@ -128,39 +128,8 @@ require __DIR__ . '/../includes/menu.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adicionar Produto</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-    .img-thumbnail {
-        max-width: 100px;
-        max-height: 100px;
-        margin-right: 10px;
-        margin-bottom: 10px;
-    }
-
-    .position-relative {
-        position: relative;
-        display: inline-block;
-    }
-
-    .btn-close {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background-color: red;
-        color: white;
-        border: none;
-        cursor: pointer;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        line-height: 1;
-        padding: 0;
-        border-radius: 50%;
-    }
-    </style>
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet"> <!-- Inclui o CSS do jQuery UI -->
+    <link href="/css/styles.css" rel="stylesheet"> <!-- Inclui o arquivo CSS dedicado -->
 </head>
 <body>
     <div class="container mt-5 pt-5">
