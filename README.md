@@ -1,57 +1,52 @@
-📂 Estrutura de Pastas Recomendada
+# Projeto de Masmorra RPG
 
-gestao3d/
-│── 📂 assets/          # Arquivos estáticos (CSS, JS, imagens, fontes)
-│   ├── css/           # Arquivos CSS
-│   │   ├── estilo.css
-│   ├── js/            # Scripts JavaScript
-│   ├── img/           # Imagens do sistema
-│
-│── 📂 config/          # Configuração do sistema
-│   ├── config.php      # Conexão com o banco de dados
-│   ├── auth.php        # Verificação de login/autenticação
-│
-│── 📂 controllers/     # Lógica de processamento (CRUDs)
-│   ├── adicionar_peca.php
-│   ├── editar_peca.php
-│   ├── excluir_peca.php
-│   ├── listar_pecas.php
-│   ├── adicionar_estudio.php
-│   ├── editar_estudio.php
-│   ├── excluir_estudio.php
-│   ├── ...
-│
-│── 📂 views/           # Páginas visíveis ao usuário
-│   ├── index.php       # Página inicial
-│   ├── login.php       # Tela de login
-│   ├── logout.php      # Tela de logout
-│   ├── pecas.php       # Listagem de peças
-│   ├── estudios.php    # Listagem de estúdios
-│   ├── impressoras.php # Listagem de impressoras
-│   ├── ...
-│
-│── 📂 includes/        # Componentes reutilizáveis
-│   ├── header.php      # Cabeçalho do site
-│   ├── footer.php      # Rodapé do site
-│   ├── menu.php        # Menu de navegação
-│
-│── 📂 database/        # Scripts SQL e backups
-│   ├── backup.sql      # Backup do banco de dados
-│   ├── tabelas.sql     # Estrutura do banco de dados
-│
-│── 📂 uploads/         # Uploads de arquivos (STL, imagens, etc.)
-│   ├── pecas/          # Arquivos STL das peças
-│   ├── imagens/        # Imagens de peças e impressoras
-│
-│── .htaccess           # Arquivo de configuração do Apache
-│── README.md           # Informações sobre o projeto
+Este projeto é um gerador de masmorras para jogos de RPG. Ele permite que os usuários explorem salas geradas aleatoriamente, rolem dados e visualizem um mapa completo da masmorra.
 
+## Funcionalidades
 
-📌 Explicação das Pastas
-assets/ → Para armazenar arquivos CSS, JavaScript, imagens, fontes.
-config/ → Contém arquivos de configuração, como a conexão com o banco (config.php).
-controllers/ → Toda a lógica do sistema (CRUDs, processamentos de formulários).
-views/ → Páginas que o usuário acessa diretamente (listas, formulários).
-includes/ → Componentes reutilizáveis como menu.php, header.php e footer.php.
-database/ → Scripts SQL do banco de dados (backups e estrutura).
-uploads/ → Diretório para armazenar arquivos enviados pelos usuários.
+- **Gerador de Salas**: Cada sala é gerada aleatoriamente com descrições, monstros e tesouros únicos.
+- **Rolagem de Dados**: Os usuários podem rolar diferentes tipos de dados (moeda, d4, d6, d8, d10, d12, d20, d100) e ver os resultados.
+- **Mapa Completo**: Um link permite que os usuários visualizem o mapa completo da masmorra em um modal.
+
+## Estrutura do Projeto
+
+- `assets/`: Contém arquivos CSS, fontes, imagens e JavaScript.
+  - `css/styles.css`: Estilos para o projeto.
+  - `images/`: Imagens usadas no projeto.
+- `includes/`: Contém arquivos PHP incluídos em várias partes do projeto.
+  - `database.php`: Conexão com o banco de dados.
+  - `gerar_sala.php`: Função para gerar salas.
+  - `header.php`: Cabeçalho do site.
+- `pages/`: Contém as páginas principais do projeto.
+  - `sala.php`: Página para exibir uma sala específica.
+- `templates/`: Contém templates usados em várias partes do projeto.
+  - `footer.php`: Rodapé do site.
+- `index.php`: Página inicial do projeto.
+
+## Como Usar
+
+1. Clone o repositório para o seu ambiente local.
+2. Configure o banco de dados no arquivo `includes/database.php`.
+3. Acesse a página inicial (`index.php`) para começar a explorar a masmorra.
+
+## Exemplo de Uso
+
+### Gerar uma Sala
+
+A função `gerarSala` no arquivo `includes/gerar_sala.php` é usada para gerar uma sala com base no ID da sala e na conexão com o banco de dados.
+
+### Rolagem de Dados
+
+Os botões para rolar dados estão localizados na página `pages/sala.php`. Cada botão chama a função JavaScript `rolarDado(tipo)` para gerar um resultado aleatório e exibi-lo na página.
+
+### Visualizar o Mapa Completo
+
+O link "Ver Mapa Completo da Masmorra" abre um modal com a imagem do mapa completo (`masmorraGM.png`).
+
+## Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests para melhorar o projeto.
+
+## Licença
+
+Este projeto está licenciado sob a Licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.

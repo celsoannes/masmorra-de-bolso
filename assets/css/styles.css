@@ -1,0 +1,262 @@
+body {
+    font-family: 'MedievalSharp', cursive;
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url('../images/dungeon-background.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.container {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: left;
+    max-width: 800px;
+    width: 90%;
+    margin: 20px auto;
+    line-height: 1.6;
+    padding-bottom: 100px; /* Espaçamento para o footer */
+}
+
+/* Estilo global para links */
+a {
+    color: #8b0000; /* Cor do link */
+    text-decoration: none; /* Remove o sublinhado */
+    transition: color 0.3s ease; /* Efeito de transição */
+}
+
+a:hover {
+    color: #6b0000; /* Cor do link ao passar o mouse */
+}
+
+h1 {
+    font-size: 2.6rem;
+    margin-bottom: 20px;
+    text-align: center; /* Centralizar apenas o título */
+}
+
+h2 {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    text-align: justify; /* Centralizar apenas o título */
+}
+
+p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.sala-info {
+    margin-bottom: 20px;
+}
+
+.sala-info p {
+    margin: 10px 0; /* Espaçamento entre parágrafos */
+}
+
+/* Estilo para centralizar o contêiner */
+.container-centralizado {
+    text-align: center; /* Centraliza o texto */
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    color: #fff; /* Cor do texto */
+    background-color: #8b0000;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin: 5px;
+}
+
+.btn:hover {
+    background-color: #6b0000;
+    color: #fff; /* Certifique-se de que a cor do texto permanece branca */
+}
+
+.navegacao {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.sala-imagem {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.masmorra-imagem {
+    max-width: 80%; /* Ajuste a largura conforme necessário */
+    height: auto;
+    display: block;
+    margin: 0 auto; /* Centraliza a imagem */
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* Estilos para o footer */
+footer {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #e0e0e0;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    font-size: 0.9rem;
+    border-top: 1px solid #8b0000;
+    z-index: 1000;
+    height: 60px; /* Altura fixa para o footer */
+}
+
+footer a {
+    color: #e0e0e0;
+    text-decoration: none;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #8b0000;
+}
+
+/* Media query para dispositivos móveis */
+@media (max-width: 768px) {
+    footer {
+        bottom: 20px; /* Ajuste a posição do footer 20px mais para cima */
+    }
+}
+
+/* Estilo para a chave */
+.destaque-chave {
+    color: #8b0000; /* Cor vermelha escura */
+    font-weight: bold; /* Negrito */
+}
+
+.thumbnail {
+    max-width: 200px; /* Tamanho da thumbnail */
+    cursor: pointer;
+}
+
+.modal {
+    display: none; /* Escondido por padrão */
+    position: fixed;
+    z-index: 1;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.9); /* Fundo preto */
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    border: 5px solid #fff; /* Borda branca */
+    max-width: 100%; /* Limita a largura máxima ao tamanho da tela */
+    height: auto; /* Ajusta a altura automaticamente */
+}
+
+.mapa-link.centralizado {
+    text-align: center; /* Centraliza o texto */
+    margin-top: 20px; /* Adiciona uma margem superior */
+}
+
+.clipped-image {
+    overflow: hidden; /* Esconde o resto da imagem */
+    position: relative;
+    background-color: black; /* Fundo preto */
+    width: 204px; /* Largura da área visível */
+    height: 184px; /* Altura da área visível */
+    margin: 0 auto; /* Centraliza a imagem */
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.clipped-image img {
+    position: absolute;
+    top: -40px; /* Ajuste a posição da imagem conforme necessário */
+    left: -20px; /* Ajuste a posição da imagem conforme necessário */
+    width: auto;
+    height: auto;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.rolar-dados {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.dados-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.dado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #8b0000;
+    border-radius: 5px; /* Mesmo arredondamento dos botões */
+    background-color: rgba(0, 0, 0, 0.8);
+    width: 60px; /* Tamanho fixo da moldura */
+    height: 60px; /* Tamanho fixo da moldura */
+}
+
+.dado button {
+    margin-bottom: 5px;
+    border-radius: 5px; /* Mesmo arredondamento dos botões */
+    background-color: #8b0000;
+    color: #fff;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dado button:hover {
+    background-color: #6b0000;
+    color: #fff;
+}
+
+.dado span {
+    margin-top: 5px;
+    color: #e0e0e0;
+}
